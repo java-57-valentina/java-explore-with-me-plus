@@ -10,7 +10,7 @@
     <artifactId>ewm-service</artifactId>
     <packaging>jar</packaging>
 
-    <name>main-service</name>
+    <name>ewm-service</name>
     <url>http://maven.apache.org</url>
 
     <properties>
