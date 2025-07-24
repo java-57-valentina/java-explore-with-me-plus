@@ -8,7 +8,9 @@ import ru.practicum.statsserver.model.Hit;
 import ru.practicum.statsserver.model.Stats;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,9 +30,9 @@ public class HitRepository  {
                 SELECT service, uri, %s as hits_count
                 FROM hits
                 WHERE timestamp BETWEEN ? AND ?
-                AND uri IN (%s)
+                %s
                 GROUP BY service, uri
-                ORDER BY service, uri
+                ORDER BY hits_count DESC, service, uri
                 """;
 
     public void save(Hit hit) {
@@ -44,22 +46,29 @@ public class HitRepository  {
 
     public Collection<Stats> getStatistics(LocalDateTime start,
                                            LocalDateTime end,
-                                           Collection<String> uris,
+                                               Collection<String> uris,
                                            boolean unique) {
 
-        String placeholders = uris.stream()
-                .map(uri -> "?")
-                .collect(Collectors.joining(", "));
+        if (uris == null)
+            uris = new ArrayList<>();
 
-        String query = SQL_SELECT.formatted(
-                unique ? "COUNT(DISTINCT ip)" : "COUNT(ip)",
-                placeholders
+        String urisCondition = "";
+        if (!uris.isEmpty()) {
+            int urisCount = uris.size();
+            String placeholders = String.join(", ", Collections.nCopies(urisCount, "?"));
+            urisCondition = "AND uri IN (" + placeholders + ")";
+        }
+
+        String query = SQL_SELECT
+                .formatted(
+                    unique ? "COUNT(DISTINCT ip)" : "COUNT(ip)",
+                    urisCondition
         );
 
-        Object[] params = Stream.concat(
+        Stream<Object> paramsStream = Stream.concat(
                 Stream.of(start, end),
-                uris.stream()).toArray();
+                uris.stream());
 
-        return jdbcTemplate.query(query, rowMapper, params);
+        return jdbcTemplate.query(query, rowMapper, paramsStream.toArray());
     }
 }

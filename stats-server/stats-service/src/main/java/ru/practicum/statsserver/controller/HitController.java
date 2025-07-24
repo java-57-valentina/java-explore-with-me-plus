@@ -37,7 +37,7 @@ public class HitController {
     public Collection<StatsDtoOut> select(
             @RequestParam @NotNull @DateTimeFormat(pattern = DATETIME_FORMAT) LocalDateTime start,
             @RequestParam @NotNull @DateTimeFormat(pattern = DATETIME_FORMAT) LocalDateTime end,
-            @RequestParam ArrayList<String> uris,
+            @RequestParam (required = false) ArrayList<String> uris,
             @RequestParam (defaultValue = "false") Boolean unique) {
 
         log.info("request for statistics:");
