@@ -26,7 +26,7 @@ public abstract class StatsClient {
     private static final String HIT_ENDPOINT = "/hit";
     private static final String STATS_ENDPOINT = "/stats";
 
-    public StatsClient(String serverUrl) {
+    protected StatsClient(String serverUrl) {
         this.serverUrl = serverUrl;
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
@@ -34,18 +34,19 @@ public abstract class StatsClient {
         factory.setConnectionRequestTimeout(Duration.ofSeconds(5));
 
         restClient = RestClient.builder()
-                .requestFactory(new HttpComponentsClientHttpRequestFactory())
+                .requestFactory(factory)
                 .baseUrl(serverUrl)
                 .build();
     }
 
     public void hit(String service, String url, String ip) {
-        HitDto dto = new HitDto();
-        dto.setService(service);
-        dto.setUri(url);
-        dto.setIp(ip);
-        dto.setDateTime(LocalDateTime.now());
-        this.hit(dto);
+        HitDto dto = HitDto.builder()
+                .service(service)
+                .uri(url)
+                .ip(ip)
+                .dateTime(LocalDateTime.now())
+                .build();
+        hit(dto);
     }
 
     public void hit(HitDto hitDto) throws StatsClientException {
@@ -69,7 +70,7 @@ public abstract class StatsClient {
                                             boolean unique) throws StatsClientException {
         validateDates(start, end);
 
-        String url = UriComponentsBuilder.fromHttpUrl(serverUrl + STATS_ENDPOINT)
+        String url = UriComponentsBuilder.fromUriString(serverUrl + STATS_ENDPOINT)
                 .queryParam("start", start.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .queryParam("end", end.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .queryParam("uris", uris)
@@ -83,7 +84,7 @@ public abstract class StatsClient {
                     .uri(url)
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, (req, res) -> {
-                        throw new RuntimeException("Stats service error: " + res.getStatusCode());
+                        throw new StatsClientException("Stats service error: " + res.getStatusCode());
                     })
                     .body(StatsDtoOut[].class);
             return stats != null ? Arrays.asList(stats) : Collections.emptyList();

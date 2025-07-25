@@ -13,8 +13,8 @@ import ru.practicum.statsdto.StatsDtoOut;
 import ru.practicum.statsserver.service.HitService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -37,8 +37,8 @@ public class HitController {
     public Collection<StatsDtoOut> select(
             @RequestParam @NotNull @DateTimeFormat(pattern = DATETIME_FORMAT) LocalDateTime start,
             @RequestParam @NotNull @DateTimeFormat(pattern = DATETIME_FORMAT) LocalDateTime end,
-            @RequestParam (required = false) ArrayList<String> uris,
-            @RequestParam (defaultValue = "false") Boolean unique) {
+            @RequestParam(required = false) List<String> uris,
+            @RequestParam(defaultValue = "false") Boolean unique) {
 
         log.info("request for statistics:");
         log.info(" start date: {}", start);
