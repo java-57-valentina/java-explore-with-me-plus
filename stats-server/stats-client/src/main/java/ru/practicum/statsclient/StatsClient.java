@@ -34,7 +34,7 @@ public abstract class StatsClient {
         factory.setConnectionRequestTimeout(Duration.ofSeconds(5));
 
         restClient = RestClient.builder()
-                .requestFactory(new HttpComponentsClientHttpRequestFactory())
+                .requestFactory(factory)
                 .baseUrl(serverUrl)
                 .build();
     }
