@@ -10,8 +10,8 @@ import ru.practicum.statsserver.mappers.StatsMapper;
 import ru.practicum.statsserver.repository.HitRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class HitService {
 
     public Collection<StatsDtoOut> getStatistics(LocalDateTime start,
                                                  LocalDateTime end,
-                                                 ArrayList<String> uris,
+                                                 List<String> uris,
                                                  Boolean unique) {
         if (start.isAfter(end))
             throw new ParameterInvalidException("'start' date must be before the 'end' date");
