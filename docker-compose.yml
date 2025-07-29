@@ -34,7 +34,7 @@ services:
     image: postgres:16.1
     container_name: postgres-ewm-main-db
     ports:
-      - "5434:5432"  # Внутри 5433, снаружи 5434
+      - "5434:5432"
     environment:
       - POSTGRES_DB=ewmdb
       - POSTGRES_USER=dbuser
