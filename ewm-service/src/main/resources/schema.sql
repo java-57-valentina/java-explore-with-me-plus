@@ -6,3 +6,10 @@ CREATE TABLE IF NOT EXISTS categories (
     CONSTRAINT uq_categories_name UNIQUE (name),
     CONSTRAINT ck_categories_name CHECK (LENGTH(name) >= 1)
 );
+
+CREATE TABLE IF NOT EXISTS users
+(
+    id    BIGSERIAL PRIMARY KEY,
+    name  VARCHAR        NOT NULL,
+    email VARCHAR UNIQUE NOT NULL
+);

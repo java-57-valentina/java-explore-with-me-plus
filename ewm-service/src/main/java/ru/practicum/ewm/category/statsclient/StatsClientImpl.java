@@ -1,4 +1,4 @@
-package ru.practicum.ewm.statsclient;
+package ru.practicum.ewm.category.statsclient;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
