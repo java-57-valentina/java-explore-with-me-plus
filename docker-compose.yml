@@ -55,7 +55,7 @@ services:
       - stats-server
       - ewm-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmdb  # Внутри сети используем 5433
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmdb
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=123456
       - STATSSERVER_URL=http://stats-server:9090
