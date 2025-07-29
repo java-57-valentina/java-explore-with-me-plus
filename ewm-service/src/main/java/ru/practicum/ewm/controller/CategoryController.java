@@ -22,8 +22,11 @@ public class CategoryController {
 
 
     @GetMapping("/categories")
-    public Collection<CategoryDtoOut> getCategories() {
-        return categoryService.getAll();
+    public Collection<CategoryDtoOut> getCategories(
+            @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer offset,
+            @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer limit
+    ) {
+        return categoryService.getAll(offset, limit);
     }
 
     @GetMapping("/categories/{id}")

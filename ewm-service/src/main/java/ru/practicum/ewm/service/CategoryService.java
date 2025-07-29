@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public interface CategoryService {
 
-    Collection<CategoryDtoOut> getAll();
+    Collection<CategoryDtoOut> getAll(Integer offset, Integer limit);
 
     CategoryDtoOut get(Long id);
 

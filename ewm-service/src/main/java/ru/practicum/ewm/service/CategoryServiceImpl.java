@@ -21,8 +21,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public Collection<CategoryDtoOut> getAll() {
-        Collection<Category> categories = categoryRepository.findAll();
+    public Collection<CategoryDtoOut> getAll(Integer offset, Integer limit) {
+        Collection<Category> categories = categoryRepository.findWithOffsetAndLimit(offset, limit);
         return categories.stream()
                 .map(CategoryMapper::toDto)
                 .toList();
