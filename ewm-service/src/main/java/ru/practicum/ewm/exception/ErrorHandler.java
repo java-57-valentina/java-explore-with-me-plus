@@ -1,6 +1,7 @@
 package ru.practicum.ewm.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -55,6 +56,18 @@ public class ErrorHandler {
                 .message("Required parameter '" + ex.getParameterName() + "' is missing")
                 .reason("Missing parameter.")
                 .status(HttpStatus.BAD_REQUEST)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse onDataIntegrityViolationException(final DataIntegrityViolationException e) {
+        log.error("409 {}", e.getMessage());
+        return ErrorResponse.builder()
+                .message(e.getMessage())
+                .status(HttpStatus.CONFLICT)
+                .reason(e.getRootCause().getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
     }

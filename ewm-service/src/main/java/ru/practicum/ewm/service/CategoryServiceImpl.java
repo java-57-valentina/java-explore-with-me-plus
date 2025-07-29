@@ -1,7 +1,6 @@
 package ru.practicum.ewm.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.CategoryDto;
@@ -40,13 +39,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDtoOut add(CategoryDto categoryDto) {
         Category category = CategoryMapper.fromDto(categoryDto);
-        try {
-            Category saved = categoryRepository.save(category);
-            return CategoryMapper.toDto(saved);
-        }
-        catch (DataIntegrityViolationException e) {
-            throw e;
-        }
+        Category saved = categoryRepository.save(category);
+        return CategoryMapper.toDto(saved);
     }
 
     @Override
@@ -56,14 +50,8 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new NotFoundException("Category", id));
 
         category.setName(categoryDto.getName());
-
-        try {
-            Category saved = categoryRepository.save(category);
-            return CategoryMapper.toDto(saved);
-        }
-        catch (DataIntegrityViolationException e) {
-            throw e;
-        }
+        Category saved = categoryRepository.save(category);
+        return CategoryMapper.toDto(saved);
     }
 
     @Override
