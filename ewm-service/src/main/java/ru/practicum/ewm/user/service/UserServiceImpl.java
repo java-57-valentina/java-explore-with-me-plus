@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.user.dto.NewUserRequest;
-import ru.practicum.ewm.user.dto.UserDto;
+import ru.practicum.ewm.user.dto.UserDtoOut;
 import ru.practicum.ewm.user.mapper.UserMapper;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
@@ -20,17 +20,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDto createUser(NewUserRequest request) {
+    public UserDtoOut createUser(NewUserRequest request) {
         User user = UserMapper.toEntity(request);
         return UserMapper.toDto(userRepository.save(user));
     }
 
     @Override
-    public List<UserDto> getUsers(List<Long> ids, int from, int size) {
+    public List<UserDtoOut> getUsers(List<Long> ids, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
-        List<User> users = (ids == null || ids.isEmpty())
-                ? userRepository.findAll(pageable).getContent()
-                : userRepository.findByIdIn(ids, pageable);
+        List<User> users = userRepository.findAllWithOffset(pageable);
         return users.stream().map(UserMapper::toDto).collect(Collectors.toList());
     }
 
