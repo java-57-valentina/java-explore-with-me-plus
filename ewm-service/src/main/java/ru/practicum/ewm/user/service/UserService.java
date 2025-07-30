@@ -7,7 +7,7 @@ import ru.practicum.ewm.user.dto.UserDtoOut;
 public interface UserService {
     UserDtoOut createUser(NewUserRequest request);
 
-    List<UserDtoOut> getUsers(List<Long> ids, int from, int size);
+    List<UserDtoOut> getUsers(int from, int size);
 
     void deleteUser(Long userId);
 }

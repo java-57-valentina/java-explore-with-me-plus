@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDtoOut> getUsers(List<Long> ids, int from, int size) {
+    public List<UserDtoOut> getUsers(int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         List<User> users = userRepository.findAllWithOffset(pageable);
         return users.stream().map(UserMapper::toDto).collect(Collectors.toList());
