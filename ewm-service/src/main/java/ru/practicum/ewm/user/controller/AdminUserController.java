@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.user.dto.NewUserRequest;
 import ru.practicum.ewm.user.dto.UserDtoOut;
@@ -12,6 +13,7 @@ import ru.practicum.ewm.user.service.UserService;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/admin/users")
 @RequiredArgsConstructor
 public class AdminUserController {
