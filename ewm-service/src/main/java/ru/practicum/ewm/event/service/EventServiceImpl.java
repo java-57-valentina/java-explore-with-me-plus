@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.event.dto.*;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
 
     private static final int MIN_TIME_TO_UNPUBLISHED_EVENT = 2;
@@ -37,6 +39,7 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
+    @Transactional
     public EventDtoOut add(Long userId, EventCreateDto eventDto) {
 
         validateEventDate(eventDto.getEventDate(), EventState.PENDING);
@@ -53,6 +56,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventDtoOut update(Long userId, Long eventId, EventUpdateDto eventDto) {
 
         Event event = getEvent(eventId);
@@ -100,6 +104,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventDtoOut update(Long eventId, EventUpdateAdminDto eventDto) {
 
         // дата начала изменяемого события должна быть не ранее чем за час от даты публикации.
