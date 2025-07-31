@@ -1,6 +1,5 @@
 package ru.practicum.ewm.participation.controller;
 
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,9 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.participation.dto.ParticipationRequestDto;
 import ru.practicum.ewm.participation.service.ParticipationRequestService;
-import ru.practicum.ewm.participation.service.ParticipationRequestServiceImpl;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -67,11 +64,4 @@ public class ParticipationRequestController {
         return ResponseEntity.ok(canceledRequest);
     }
 
-    /** Получение информации о запросах на участие в событии текущего пользователя
-     */
-    @GetMapping("/users/{userId}/events/{eventId}/requests")
-    public List<ParticipationRequestDto> getRequests(@PathVariable @Min(1) Long userId,
-                                                           @PathVariable @Min(1) Long eventId) {
-        return requestService.getRequestsForEvent(eventId, userId);
-    }
 }

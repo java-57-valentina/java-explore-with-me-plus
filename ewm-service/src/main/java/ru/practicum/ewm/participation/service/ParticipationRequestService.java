@@ -1,5 +1,7 @@
 package ru.practicum.ewm.participation.service;
 
+import ru.practicum.ewm.participation.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.ewm.participation.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.participation.dto.ParticipationRequestDto;
 
 import java.util.List;
@@ -33,4 +35,16 @@ public interface ParticipationRequestService {
      * @return DTO отменённой заявки
      */
     ParticipationRequestDto cancelRequest(Long userId, Long requestId);
+
+    /**
+     * Обновляет статусы заявок (подтверждение или отклонение).
+     *
+     * @param userId  ID инициатора события
+     * @param eventId ID события
+     * @param request объект с новыми статусами и списком ID заявок
+     * @return результат обработки — список подтверждённых и отклонённых заявок
+     */
+    EventRequestStatusUpdateResult updateRequestStatuses(Long userId,
+                                                         Long eventId,
+                                                         EventRequestStatusUpdateRequest request);
 }
