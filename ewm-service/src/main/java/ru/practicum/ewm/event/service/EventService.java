@@ -10,12 +10,16 @@ public interface EventService {
     EventDtoOut add(Long userId, CreateEventDto eventDto);
 
     EventDtoOut update(Long userId, Long eventId, EventUpdateDto updateRequest);
+
     EventDtoOut update(Long eventId, EventUpdateAdminDto eventDto);
 
     EventDtoOut findBy(Long eventId);
+
     EventDtoOut get(Long userId, Long eventId);
 
     Collection<EventShortDtoOut> findShortEventsBy(EventFilter filter);
+
     Collection<EventDtoOut> findFullEventsBy(EventFilter filter);
+
     Collection<EventShortDtoOut> getEventsCreatedByUser(Long userId, Integer offset, Integer limit);
 }
