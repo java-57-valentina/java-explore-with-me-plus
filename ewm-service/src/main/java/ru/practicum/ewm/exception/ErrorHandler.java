@@ -89,7 +89,7 @@ public class ErrorHandler {
         return ErrorResponse.builder()
                 .message(e.getMessage())
                 .status(HttpStatus.CONFLICT)
-                .reason(e.getRootCause().getMessage())
+                .reason(Objects.requireNonNull(e.getRootCause()).getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -106,6 +106,17 @@ public class ErrorHandler {
                 .message(e.getMessage())
                 .reason(stackTrace)
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbiddenException(ForbiddenException ex) {
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.FORBIDDEN)
+                .reason("Access denied.")
                 .timestamp(LocalDateTime.now())
                 .build();
     }
