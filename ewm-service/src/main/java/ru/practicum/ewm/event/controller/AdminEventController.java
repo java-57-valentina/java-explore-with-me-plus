@@ -4,14 +4,19 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventDtoOut;
 import ru.practicum.ewm.event.dto.EventUpdateAdminDto;
+import ru.practicum.ewm.event.model.EventAdminFilter;
 import ru.practicum.ewm.event.model.EventFilter;
+import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.service.EventService;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -24,12 +29,18 @@ public class AdminEventController {
 
     @GetMapping
     public Collection<EventDtoOut> getEvents(
-            @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer offset,
-            @RequestParam(name = "size", defaultValue = "10") @Min(1) Integer limit) {
+            @RequestParam(required = false) List<Long> users,
+            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(required = false) List<EventState> states,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+            @RequestParam(defaultValue = "0") Integer offset,
+            @RequestParam(defaultValue = "10") Integer limit) {
 
         log.info("request from Admin: get all events");
-        EventFilter filter = EventFilter.builder()
-                .state(null)
+        EventAdminFilter filter = EventAdminFilter.builder()
+                .users(users)
+                .states(states)
                 .from(offset)
                 .size(limit)
                 .build();

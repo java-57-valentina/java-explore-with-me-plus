@@ -23,12 +23,28 @@ public class EventSpecifications {
                 );
     }
 
+    public static Specification<Event> withUsers(List<Long> users) {
+        if (users == null || users.isEmpty())
+            return null;
+
+        return (root, query, cb) ->
+                root.get("initiator").get("id").in(users);
+    }
+
     public static Specification<Event> withCategoriesIn(List<Long> categories) {
         if (categories == null || categories.isEmpty())
             return null;
 
         return (root, query, cb) ->
                 root.get("category").get("id").in(categories);
+    }
+
+    public static Specification<Event> withStatesIn(List<EventState> states) {
+        if (states == null || states.isEmpty())
+            return null;
+
+        return (root, query, cb) ->
+                root.get("state").in(states);
     }
 
     public static Specification<Event> withPaid(Boolean paid) {
@@ -69,4 +85,5 @@ public class EventSpecifications {
         return rangeEnd == null ? null : (root, query, cb) ->
                 cb.lessThanOrEqualTo(root.get("eventDate"), rangeEnd);
     }
+
 }

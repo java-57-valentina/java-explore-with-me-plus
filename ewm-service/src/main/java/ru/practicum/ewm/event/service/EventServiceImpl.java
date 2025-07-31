@@ -2,6 +2,7 @@ package ru.practicum.ewm.event.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.category.model.Category;
@@ -9,6 +10,7 @@ import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.event.dto.*;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.EventAdminFilter;
 import ru.practicum.ewm.event.model.EventFilter;
 import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.repository.EventRepository;
@@ -20,6 +22,7 @@ import ru.practicum.ewm.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -165,6 +168,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public Collection<EventDtoOut> findFullEventsBy(EventAdminFilter filter) {
+        return findBy(filter).stream()
+                .map(EventMapper::toDto)
+                .toList();
+    }
+
+
+    @Override
     public Collection<EventDtoOut> findFullEventsBy(EventFilter filter) {
         return findBy(filter).stream()
                 .map(EventMapper::toDto)
@@ -173,14 +184,30 @@ public class EventServiceImpl implements EventService {
 
 
     private Collection<Event> findBy(EventFilter filter) {
-        log.debug("findBy filter: {}", filter);
+        log.debug("findBy EventFilter: {}", filter);
         Specification<Event> spec = buildSpecification(filter);
         return eventRepository.findAll(spec, filter.getPageable()).getContent();
     }
 
-    private Specification<Event> buildSpecification(EventFilter filter) {
+    private Collection<Event> findBy(EventAdminFilter filter) {
+        log.debug("findBy EventAdminFilter: {}", filter);
+        Specification<Event> spec = buildSpecification(filter);
+        return eventRepository.findAll(spec, filter.getPageable()).getContent();
+    }
 
-        log.debug("buildSpecification");
+    private Specification<Event> buildSpecification(EventAdminFilter filter) {
+        Specification<Event> spec = Specification
+                .where(EventSpecifications.withUsers(filter.getUsers()))
+                .and(EventSpecifications.withCategoriesIn(filter.getCategories()))
+                .and(EventSpecifications.withStatesIn(filter.getStates()))
+                .and(EventSpecifications.withRangeStart(filter.getRangeStart()))
+                .and(EventSpecifications.withRangeEnd(filter.getRangeEnd()));
+
+        return spec;
+    }
+
+
+    private Specification<Event> buildSpecification(EventFilter filter) {
         Specification<Event> spec = Specification
                 .where(EventSpecifications.withTextContains(filter.getText()))
                 .and(EventSpecifications.withCategoriesIn(filter.getCategories()))
