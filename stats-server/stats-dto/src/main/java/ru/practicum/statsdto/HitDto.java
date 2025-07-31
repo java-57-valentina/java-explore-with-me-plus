@@ -28,7 +28,6 @@ public class HitDto {
     private String uri;
 
     @NotBlank
-    @Pattern(regexp = "^(?!\\.)(\\d+\\.)*\\d+$", message = "Invalid ip adress")
     private String ip;
 
     @JsonProperty("timestamp")
