@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
 @ToString
 public class EventUpdateDto {
 
@@ -36,11 +34,11 @@ public class EventUpdateDto {
 
     private LocationDto location;
 
-    private Boolean paid = false;
+    private Boolean paid;
 
     @Min(0)
-    private Integer participantLimit = 0;
-    private Boolean requestModeration = true;
+    private Integer participantLimit;
+    private Boolean requestModeration;
 
     private StateAction stateAction;
 

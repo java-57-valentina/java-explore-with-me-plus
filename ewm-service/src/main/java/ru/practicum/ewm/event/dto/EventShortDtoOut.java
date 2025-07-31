@@ -25,5 +25,7 @@ public class EventShortDtoOut {
 
     private Boolean paid;
     private Integer confirmedRequests;
-    private Long views;
+
+    @Builder.Default
+    private Integer views = 0;
 }

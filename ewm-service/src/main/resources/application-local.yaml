@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: ewm-service
   sql:
     init:
       mode: always

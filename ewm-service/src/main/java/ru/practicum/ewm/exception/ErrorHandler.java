@@ -82,6 +82,18 @@ public class ErrorHandler {
                 .build();
     }
 
+    @ExceptionHandler(InvalidRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidRequestException(InvalidRequestException ex) {
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .reason("Bad request.")
+                .status(HttpStatus.BAD_REQUEST)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse onDataIntegrityViolationException(final DataIntegrityViolationException e) {
