@@ -9,6 +9,7 @@ import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.ConditionNotMetException;
 import ru.practicum.ewm.exception.ForbiddenException;
+import ru.practicum.ewm.exception.NoAccessException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.participation.dto.ParticipationRequestDto;
 import ru.practicum.ewm.participation.mapper.ParticipationRequestMapper;
@@ -26,6 +27,7 @@ import static ru.practicum.ewm.participation.model.ParticipationRequest.RequestS
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
 
@@ -74,12 +76,30 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
      * @return список DTO заявок
      * @throws NotFoundException если пользователь не найден
      */
-    @Transactional(readOnly = true)
+    @Override
     public List<ParticipationRequestDto> getUserRequests(Long userId) {
         if (!userRepo.existsById(userId)) {
             throw new NotFoundException("User", userId);
         }
         return requestRepo.findAllByRequesterId(userId).stream()
+                .map(ParticipationRequestMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<ParticipationRequestDto> getRequestsForEvent(Long eventId, Long initiatorId) {
+        log.debug("getRequestsForEvent: {} of user: {}", eventId, initiatorId);
+
+        User user = getUserById(initiatorId);
+        Event event = getEventById(eventId);
+
+        if (!event.getInitiator().getId().equals(initiatorId)) {
+            throw new NoAccessException("Only initiator can view requests of event");
+        }
+
+        List<ParticipationRequest> allByEventId = requestRepo.findAllByEventId(eventId);
+
+        return allByEventId.stream()
                 .map(ParticipationRequestMapper::toDto)
                 .toList();
     }
@@ -93,6 +113,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
      * @throws NotFoundException  если заявка не найдена
      * @throws ForbiddenException если пользователь не является автором заявки
      */
+    @Override
     @Transactional
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         log.info("Пользователь {} отменяет заявку с ID {}", userId, requestId);

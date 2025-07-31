@@ -152,7 +152,7 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("Event", eventId));
 
         if (!existing.getInitiator().getId().equals(userId)) {
-            throw new NoAccessException("Only initiator can edit the event");
+            throw new NoAccessException("Only initiator can view this event");
         }
 
         return EventMapper.toDto(existing);

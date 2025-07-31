@@ -23,6 +23,8 @@ public interface ParticipationRequestService {
      */
     List<ParticipationRequestDto> getUserRequests(Long userId);
 
+    List<ParticipationRequestDto> getRequestsForEvent(Long eventId, Long initiatorId);
+
     /**
      * Отменяет заявку пользователя на участие.
      *

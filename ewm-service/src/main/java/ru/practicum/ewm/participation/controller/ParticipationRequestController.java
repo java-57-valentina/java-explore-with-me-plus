@@ -1,13 +1,16 @@
 package ru.practicum.ewm.participation.controller;
 
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.participation.dto.ParticipationRequestDto;
+import ru.practicum.ewm.participation.service.ParticipationRequestService;
 import ru.practicum.ewm.participation.service.ParticipationRequestServiceImpl;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -15,12 +18,11 @@ import java.util.List;
  * Все методы работают с URL в формате /users/{userId}/requests
  */
 @RestController
-@RequestMapping("/users/{userId}/requests")
 @RequiredArgsConstructor
 @Validated
 public class ParticipationRequestController {
 
-    private final ParticipationRequestServiceImpl requestService;
+    private final ParticipationRequestService requestService;
 
     /**
      * Создает новый запрос на участие пользователя в событии.
@@ -29,7 +31,7 @@ public class ParticipationRequestController {
      * @param eventId ID события, на которое подается заявка
      * @return ResponseEntity с DTO созданного запроса и статусом CREATED (201)
      */
-    @PostMapping
+    @PostMapping("/users/{userId}/requests")
     public ResponseEntity<ParticipationRequestDto> createRequest(
             @PathVariable Long userId,
             @RequestParam Long eventId) {
@@ -44,7 +46,7 @@ public class ParticipationRequestController {
      * @param userId ID пользователя
      * @return ResponseEntity со списком DTO заявок и статусом OK (200)
      */
-    @GetMapping
+    @GetMapping("/users/{userId}/requests")
     public ResponseEntity<List<ParticipationRequestDto>> getUserRequests(@PathVariable Long userId) {
         List<ParticipationRequestDto> requests = requestService.getUserRequests(userId);
         return ResponseEntity.ok(requests);
@@ -57,11 +59,19 @@ public class ParticipationRequestController {
      * @param requestId ID заявки, которую нужно отменить
      * @return ResponseEntity с DTO отмененной заявки и статусом OK (200)
      */
-    @PatchMapping("/{requestId}/cancel")
+    @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
     public ResponseEntity<ParticipationRequestDto> cancelRequest(
             @PathVariable Long userId,
             @PathVariable Long requestId) {
         ParticipationRequestDto canceledRequest = requestService.cancelRequest(userId, requestId);
         return ResponseEntity.ok(canceledRequest);
+    }
+
+    /** Получение информации о запросах на участие в событии текущего пользователя
+     */
+    @GetMapping("/users/{userId}/events/{eventId}/requests")
+    public List<ParticipationRequestDto> getRequests(@PathVariable @Min(1) Long userId,
+                                                           @PathVariable @Min(1) Long eventId) {
+        return requestService.getRequestsForEvent(eventId, userId);
     }
 }
