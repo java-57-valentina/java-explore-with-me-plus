@@ -39,6 +39,7 @@ public class AdminEventController {
         log.info("request from Admin: get all events");
         EventAdminFilter filter = EventAdminFilter.builder()
                 .users(users)
+                .categories(categories)
                 .states(states)
                 .from(offset)
                 .size(limit)
