@@ -11,6 +11,8 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
 @ToString
@@ -29,7 +31,7 @@ public class EventUpdateDto {
     private String description;
 
     @Future(message = "Дата события должна быть в будущем")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
     private LocationDto location;

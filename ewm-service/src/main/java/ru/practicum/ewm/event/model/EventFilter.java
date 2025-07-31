@@ -9,6 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
 @Builder
@@ -20,10 +22,10 @@ public class EventFilter {
     private List<Long> categories;
     private Boolean paid;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime rangeStart;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime rangeEnd;
 
     @Builder.Default

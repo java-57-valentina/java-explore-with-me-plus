@@ -9,6 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
 @Builder
@@ -21,10 +23,10 @@ public class EventAdminFilter {
     private List<Long> categories;
     private List<EventState> states;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime rangeStart;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime rangeEnd;
 
     @Builder.Default

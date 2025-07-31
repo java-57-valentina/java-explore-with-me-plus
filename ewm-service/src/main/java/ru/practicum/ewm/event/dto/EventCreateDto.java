@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,7 +34,7 @@ public class EventCreateDto {
 
     @NotNull(message = "Дата события не может быть пустой")
     @Future(message = "Дата события должна быть в будущем")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
     @NotNull

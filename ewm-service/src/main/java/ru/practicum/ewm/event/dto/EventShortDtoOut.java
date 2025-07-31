@@ -7,6 +7,8 @@ import ru.practicum.ewm.user.dto.UserDtoOut;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
 @Builder
@@ -20,7 +22,7 @@ public class EventShortDtoOut {
     private CategoryDtoOut category;
     private UserDtoOut initiator;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
     private Boolean paid;
