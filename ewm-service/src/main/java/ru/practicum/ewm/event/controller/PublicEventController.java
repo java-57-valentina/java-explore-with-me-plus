@@ -91,7 +91,7 @@ public class PublicEventController {
         EventDtoOut dtoOut = eventService.findBy(eventId);
 
         Map<String, Integer> hits = getStatistics(List.of(eventId));
-        dtoOut.setViews(hits.getOrDefault("/events/" + eventId, 0));
+        dtoOut.setViews(hits.getOrDefault(toUri(eventId), 0));
 
         writeStatisticsByIds(List.of(eventId), request.getRemoteAddr());
 
@@ -112,12 +112,12 @@ public class PublicEventController {
             return;
 
         events.forEach(dto ->
-                dto.setViews(hits.getOrDefault("/events/" + dto.getId(), 0))
+                dto.setViews(hits.getOrDefault(toUri(dto.getId()), 0))
         );
     }
 
     private void writeStatisticsByIds(Collection<Long> ids, String ip) {
-        writeStatisticsByUris(ids.stream().map(id -> "/events/" + id).toList(), ip);
+        writeStatisticsByUris(ids.stream().map(this::toUri).toList(), ip);
     }
 
     private void writeStatisticsByUris(Collection<String> uris, String ip) {
@@ -137,7 +137,7 @@ public class PublicEventController {
             stats = statsClient.getStats(
                     LocalDateTime.now().minusYears(10),
                     LocalDateTime.now().plusYears(10),
-                    ids.stream().map(id -> "/events/" + id).toList(),
+                    ids.stream().map(this::toUri).toList(),
                     true);
         } catch (StatsClientException ex) {
             log.error(ex.getMessage());
@@ -151,5 +151,9 @@ public class PublicEventController {
                         StatsDtoOut::getUri,
                         StatsDtoOut::getHits
                 ));
+    }
+
+    private String toUri(Long id) {
+        return "/events/" + id;
     }
 }
