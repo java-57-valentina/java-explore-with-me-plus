@@ -9,7 +9,6 @@ import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.event.model.Event;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @UtilityClass
 public class CompilationMapper {
@@ -29,7 +28,7 @@ public class CompilationMapper {
                 .pinned(compilation.getPinned())
                 .events(compilation.getEvents().stream()
                         .map(EventMapper::toShortDto)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build();
     }
 }
