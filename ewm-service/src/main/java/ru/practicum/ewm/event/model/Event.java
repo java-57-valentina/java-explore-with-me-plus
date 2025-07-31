@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "events")
@@ -30,10 +31,12 @@ public class Event {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_id", nullable = false)
     private User initiator;
@@ -41,6 +44,7 @@ public class Event {
     @Column(name = "event_date", nullable = false)
     private LocalDateTime eventDate;
 
+    @Builder.Default
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -53,19 +57,24 @@ public class Event {
     @Column(name = "location_lon", nullable = false)
     private Double locationLon;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean paid = false;
 
+    @Builder.Default
     @Column(name = "participant_limit", columnDefinition = "integer default 0")
     private Integer participantLimit = 0;
 
+    @Builder.Default
     @Column(name = "request_moderation", columnDefinition = "boolean default true")
     private Boolean requestModeration = true;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EventState state = EventState.PENDING;
 
+    @Builder.Default
     @Column(name = "confirmed_requests", columnDefinition = "integer default 0")
     private Integer confirmedRequests = 0;
 }

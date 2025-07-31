@@ -5,42 +5,42 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
-@Builder
 @ToString
 public class EventUpdateDto {
 
-    @Size(min = 3, max = 120, message = "Длина заголовка должна быть от 3 до 120 символов")
+    @Size(min = 3, max = 120, message = "The title length must be between 3 and 120 characters")
     private String title;
 
-    @Size(min = 20, max = 2000, message = "Длина аннотации должна быть от 20 до 2000 символов")
+    @Size(min = 20, max = 2000, message = "The annotation length must be between 20 and 2000 characters")
     private String annotation;
 
     @JsonProperty("category")
     private Long categoryId;
 
-    @Size(min = 20, max = 7000, message = "Длина описания должна быть от 20 до 7000 символов")
+    @Size(min = 20, max = 7000, message = "The description length must be between 20 and 7000 characters")
     private String description;
 
-    @Future(message = "Дата события должна быть в будущем")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Future(message = "The event date must be in future")
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
     private LocationDto location;
 
-    private Boolean paid = false;
+    private Boolean paid;
 
     @Min(0)
-    private Integer participantLimit = 0;
-    private Boolean requestModeration = true;
+    private Integer participantLimit;
+    private Boolean requestModeration;
 
     private StateAction stateAction;
 

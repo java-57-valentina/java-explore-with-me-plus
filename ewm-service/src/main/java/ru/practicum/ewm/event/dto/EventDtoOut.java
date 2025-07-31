@@ -8,9 +8,12 @@ import ru.practicum.ewm.user.dto.UserDtoOut;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventDtoOut {
@@ -23,13 +26,13 @@ public class EventDtoOut {
     private UserDtoOut initiator;
     private LocationDto location;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime createdOn;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime publishedOn;
 
     private Boolean paid;
@@ -37,5 +40,7 @@ public class EventDtoOut {
     private Boolean requestModeration;
     private EventState state;
     private Integer confirmedRequests;
-    private Long views;
+
+    @Builder.Default
+    private Integer views = 0;
 }

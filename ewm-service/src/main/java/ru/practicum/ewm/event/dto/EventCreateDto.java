@@ -4,24 +4,24 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateEventDto {
+public class EventCreateDto {
 
     @NotBlank
-    @Size(min = 3, max = 120, message = "Длина заголовка должна быть от 3 до 120 символов")
+    @Size(min = 3, max = 120, message = "The title length must be between 3 and 120 characters")
     private String title;
 
     @NotBlank
-    @Size(min = 20, max = 2000, message = "Длина аннотации должна быть от 20 до 2000 символов")
+    @Size(min = 20, max = 2000, message = "The annotation length must be between 20 and 2000 characters")
     private String annotation;
 
     @NotNull
@@ -29,12 +29,12 @@ public class CreateEventDto {
     private Long categoryId;
 
     @NotBlank
-    @Size(min = 20, max = 7000, message = "Длина описания должна быть от 20 до 7000 символов")
+    @Size(min = 20, max = 7000, message = "The description length must be between 20 and 7000 characters")
     private String description;
 
-    @NotNull(message = "Дата события не может быть пустой")
-    @Future(message = "Дата события должна быть в будущем")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull(message = "The event date cannot be empty")
+    @Future(message = "The event date must be in future")
+    @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
     @NotNull
