@@ -257,7 +257,7 @@ public class EventServiceImpl implements EventService {
 
     private void publishEvent(Event event) {
         if (event.getState() != EventState.PENDING) {
-            throw new ConditionNotMetException("Событие можно публиковать, только если оно в состоянии ожидания публикации");
+            throw new ConditionNotMetException("Events must be in 'pending' status to be published");
         }
 
         validateEventDate(event.getEventDate(), EventState.PUBLISHED);
@@ -268,7 +268,7 @@ public class EventServiceImpl implements EventService {
 
     private void rejectEvent(Event event) {
         if (event.getState() == EventState.PUBLISHED) {
-            throw new ConditionNotMetException("Событие можно отклонить, только если оно еще не опубликовано");
+            throw new ConditionNotMetException("Published events cannot be rejected");
         }
         event.setState(EventState.CANCELED);
     }
