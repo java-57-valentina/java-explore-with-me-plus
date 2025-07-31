@@ -74,7 +74,7 @@ public class Event {
     @Column(nullable = false)
     private EventState state = EventState.PENDING;
 
+    @Transient
     @Builder.Default
-    @Column(name = "confirmed_requests", columnDefinition = "integer default 0")
     private Integer confirmedRequests = 0;
 }

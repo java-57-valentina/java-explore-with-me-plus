@@ -88,7 +88,7 @@ public class PublicEventController {
                            HttpServletRequest request) {
 
         log.debug("request for published event id:{}", eventId);
-        EventDtoOut dtoOut = eventService.findBy(eventId);
+        EventDtoOut dtoOut = eventService.findPublished(eventId);
 
         Map<String, Integer> hits = getStatistics(List.of(eventId));
         dtoOut.setViews(hits.getOrDefault(toUri(eventId), 0));

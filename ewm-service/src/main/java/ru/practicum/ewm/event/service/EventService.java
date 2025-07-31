@@ -14,13 +14,13 @@ public interface EventService {
 
     EventDtoOut update(Long eventId, EventUpdateAdminDto eventDto);
 
-    EventDtoOut findBy(Long eventId);
+    EventDtoOut findPublished(Long eventId);
 
-    EventDtoOut get(Long userId, Long eventId);
+    EventDtoOut find(Long userId, Long eventId);
 
     Collection<EventShortDtoOut> findShortEventsBy(EventFilter filter);
 
     Collection<EventDtoOut> findFullEventsBy(EventAdminFilter filter);
 
-    Collection<EventShortDtoOut> getEventsCreatedByUser(Long userId, Integer offset, Integer limit);
+    Collection<EventShortDtoOut> findByInitiator(Long userId, Integer offset, Integer limit);
 }

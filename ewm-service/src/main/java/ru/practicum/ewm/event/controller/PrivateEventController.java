@@ -33,7 +33,7 @@ public class PrivateEventController {
 
         log.info("request from user: get all events created by user id:{}", userId);
 
-        return eventService.getEventsCreatedByUser(userId, offset, limit);
+        return eventService.findByInitiator(userId, offset, limit);
     }
 
     // Добавление нового события
@@ -60,6 +60,6 @@ public class PrivateEventController {
     public EventDtoOut getEventById(@PathVariable @Min(1) Long userId,
                                     @PathVariable @Min(1) Long eventId) {
         log.info("request from user: get event: {}", eventId);
-        return eventService.get(userId, eventId);
+        return eventService.find(userId, eventId);
     }
 }

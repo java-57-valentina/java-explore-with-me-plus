@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS events (
     participant_limit INT DEFAULT 0,
     request_moderation BOOLEAN DEFAULT TRUE,
     state VARCHAR(20) NOT NULL,
-    confirmed_requests INT DEFAULT 0,
 
     CONSTRAINT pk_events PRIMARY KEY (id),
     CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories (id),

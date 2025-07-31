@@ -2,6 +2,7 @@ package ru.practicum.ewm.event.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +18,19 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.ConditionNotMetException;
 import ru.practicum.ewm.exception.NoAccessException;
 import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.participation.model.RequestsCount;
+import ru.practicum.ewm.participation.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static ru.practicum.ewm.participation.model.ParticipationRequest.RequestStatus.CONFIRMED;
 
 @Slf4j
 @Service
@@ -36,6 +44,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final ParticipationRequestRepository requestRepository;
 
 
     @Override
@@ -141,53 +150,51 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDtoOut findBy(Long eventId) {
-        Event existing = eventRepository.findPublishedById(eventId)
+    public EventDtoOut findPublished(Long eventId) {
+        Event event = eventRepository.findPublishedById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event", eventId));
 
-        return EventMapper.toDto(existing);
+        Integer confirmed = requestRepository.countByEventIdAndStatus(eventId, CONFIRMED);
+        event.setConfirmedRequests(confirmed);
+        return EventMapper.toDto(event);
     }
 
     @Override
-    public EventDtoOut get(Long userId, Long eventId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User", userId));
+    public EventDtoOut find(Long userId, Long eventId) {
+        User user = getUser(userId);
+        Event event = getEvent(eventId);
 
-        Event existing = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event", eventId));
-
-        if (!existing.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiator().getId().equals(userId)) {
             throw new NoAccessException("Only initiator can view this event");
         }
 
-        return EventMapper.toDto(existing);
+        Integer confirmed = requestRepository.countByEventIdAndStatus(eventId, CONFIRMED);
+        event.setConfirmedRequests(confirmed);
+
+        return EventMapper.toDto(event);
     }
 
     @Override
     public Collection<EventShortDtoOut> findShortEventsBy(EventFilter filter) {
-        return findBy(filter).stream()
+        Specification<Event> spec = buildSpecification(filter);
+        return findBy(spec, filter.getPageable()).stream()
                 .map(EventMapper::toShortDto)
                 .toList();
     }
 
     @Override
     public Collection<EventDtoOut> findFullEventsBy(EventAdminFilter filter) {
-        return findBy(filter).stream()
+        Specification<Event> spec = buildSpecification(filter);
+        return findBy(spec, filter.getPageable()).stream()
                 .map(EventMapper::toDto)
                 .toList();
     }
 
 
-    private Collection<Event> findBy(EventFilter filter) {
-        log.debug("findBy EventFilter: {}", filter);
-        Specification<Event> spec = buildSpecification(filter);
-        return eventRepository.findAll(spec, filter.getPageable()).getContent();
-    }
-
-    private Collection<Event> findBy(EventAdminFilter filter) {
-        log.debug("findBy EventAdminFilter: {}", filter);
-        Specification<Event> spec = buildSpecification(filter);
-        return eventRepository.findAll(spec, filter.getPageable()).getContent();
+    private Collection<Event> findBy(Specification<Event> spec, Pageable pageable) {
+        Collection<Event> events = eventRepository.findAll(spec, pageable).getContent();
+        enrichWithConfirmedRequestsCount(events);
+        return events;
     }
 
     private Specification<Event> buildSpecification(EventAdminFilter filter) {
@@ -216,13 +223,30 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public Collection<EventShortDtoOut> getEventsCreatedByUser(Long userId, Integer offset, Integer limit) {
+    public Collection<EventShortDtoOut> findByInitiator(Long userId, Integer offset, Integer limit) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User", userId));
 
-        return eventRepository.findByInitiatorId(userId, offset, limit).stream()
+        Collection<Event> events = eventRepository.findByInitiatorId(userId, offset, limit);
+        enrichWithConfirmedRequestsCount(events);
+
+        return events.stream()
                 .map(EventMapper::toShortDto)
                 .toList();
+    }
+
+    private void enrichWithConfirmedRequestsCount(Collection<Event> events) {
+        List<Long> ids = events.stream().map(Event::getId).toList();
+        List<RequestsCount> requestsCounts = requestRepository.countConfirmedRequestsForEvents(ids);// Преобразование в Map<Long, Integer>
+        Map<Long, Integer> counts = requestsCounts
+                .stream()
+                .collect(Collectors.toMap(
+                        RequestsCount::getId,
+                        RequestsCount::getCount
+                ));
+        events.forEach(e ->
+                e.setConfirmedRequests(counts.getOrDefault(e.getId(), 0))
+        );
     }
 
     private void validateEventDate(LocalDateTime eventDate, EventState state) {
