@@ -74,6 +74,6 @@ CREATE TABLE IF NOT EXISTS participation_requests
     status VARCHAR(20) NOT NULL,
 
     CONSTRAINT fk_requester FOREIGN KEY (requester_id) REFERENCES users (id),
-    CONSTRAINT fk_event FOREIGN KEY (event_id) REFERENCES events (id),
+    CONSTRAINT fk_event1 FOREIGN KEY (event_id) REFERENCES events (id),
     CONSTRAINT chk_status CHECK (status IN ('PENDING', 'CONFIRMED', 'REJECTED', 'CANCELED'))
 );
