@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public interface EventService {
 
-    EventDtoOut add(Long userId, CreateEventDto eventDto);
+    EventDtoOut add(Long userId, EventCreateDto eventDto);
 
     EventDtoOut update(Long userId, Long eventId, EventUpdateDto updateRequest);
 

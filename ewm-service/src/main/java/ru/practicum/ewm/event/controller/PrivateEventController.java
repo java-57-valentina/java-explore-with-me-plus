@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.event.dto.CreateEventDto;
+import ru.practicum.ewm.event.dto.EventCreateDto;
 import ru.practicum.ewm.event.dto.EventDtoOut;
 import ru.practicum.ewm.event.dto.EventShortDtoOut;
 import ru.practicum.ewm.event.dto.EventUpdateDto;
@@ -40,7 +40,7 @@ public class PrivateEventController {
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
     public EventDtoOut createEvent(@PathVariable @Min(1) Long userId,
-                                   @RequestBody @Valid CreateEventDto eventDto) {
+                                   @RequestBody @Valid EventCreateDto eventDto) {
         log.info("request from user: create new event: {}", eventDto);
         return eventService.add(userId, eventDto);
     }

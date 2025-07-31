@@ -36,7 +36,7 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public EventDtoOut add(Long userId, CreateEventDto eventDto) {
+    public EventDtoOut add(Long userId, EventCreateDto eventDto) {
 
         validateEventDate(eventDto.getEventDate(), EventState.PENDING);
         Category category = getCategory(eventDto.getCategoryId());

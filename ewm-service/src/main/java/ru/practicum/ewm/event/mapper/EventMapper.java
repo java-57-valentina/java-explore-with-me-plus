@@ -2,7 +2,7 @@ package ru.practicum.ewm.event.mapper;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.ewm.category.mapper.CategoryMapper;
-import ru.practicum.ewm.event.dto.CreateEventDto;
+import ru.practicum.ewm.event.dto.EventCreateDto;
 import ru.practicum.ewm.event.dto.EventDtoOut;
 import ru.practicum.ewm.event.dto.EventShortDtoOut;
 import ru.practicum.ewm.event.dto.LocationDto;
@@ -11,7 +11,7 @@ import ru.practicum.ewm.user.mapper.UserMapper;
 
 @UtilityClass
 public class EventMapper {
-    public static Event fromDto(CreateEventDto eventDto) {
+    public static Event fromDto(EventCreateDto eventDto) {
         return Event.builder()
                 .annotation(eventDto.getAnnotation())
                 .title(eventDto.getTitle())
