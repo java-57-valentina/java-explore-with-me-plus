@@ -66,7 +66,7 @@ public class PublicEventController {
 
         if (filter.getRangeStart() != null && filter.getRangeEnd() != null
                 && filter.getRangeStart().isAfter(filter.getRangeEnd())) {
-            throw new InvalidRequestException("Дата начала диапазона должна быть раньше даты окончания");
+            throw new InvalidRequestException("The start date of the range must be earlier than the end date.");
         }
 
         Collection<EventShortDtoOut> events = eventService.findShortEventsBy(filter);
