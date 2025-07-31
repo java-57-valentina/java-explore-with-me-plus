@@ -26,7 +26,7 @@ public class ParticipationRequest {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime created;
 
     @Enumerated(EnumType.STRING)
