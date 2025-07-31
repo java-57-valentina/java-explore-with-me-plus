@@ -28,8 +28,7 @@ public class HitDto {
     private String uri;
 
     @NotBlank
-    @Pattern(regexp = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
-             message = "The IP address must be in the format XXX.XXX.XXX.XXX, where XXX is a number from 0 to 255")
+    @Pattern(regexp = "^(?!\\.)(\\d+\\.)*\\d+$", message = "Invalid ip adress")
     private String ip;
 
     @JsonProperty("timestamp")
