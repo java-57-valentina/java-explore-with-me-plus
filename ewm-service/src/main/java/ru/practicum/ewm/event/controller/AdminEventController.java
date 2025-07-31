@@ -43,6 +43,8 @@ public class AdminEventController {
                 .users(users)
                 .categories(categories)
                 .states(states)
+                .rangeStart(rangeStart)
+                .rangeEnd(rangeEnd)
                 .from(offset)
                 .size(limit)
                 .build();
