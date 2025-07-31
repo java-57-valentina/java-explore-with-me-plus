@@ -236,8 +236,14 @@ public class EventServiceImpl implements EventService {
     }
 
     private void enrichWithConfirmedRequestsCount(Collection<Event> events) {
+        if (events.isEmpty())
+            return;
+
         List<Long> ids = events.stream().map(Event::getId).toList();
-        List<RequestsCount> requestsCounts = requestRepository.countConfirmedRequestsForEvents(ids);// Преобразование в Map<Long, Integer>
+        List<RequestsCount> requestsCounts = requestRepository.countConfirmedRequestsForEvents(ids);
+        if (requestsCounts.isEmpty())
+            return;
+
         Map<Long, Integer> counts = requestsCounts
                 .stream()
                 .collect(Collectors.toMap(
