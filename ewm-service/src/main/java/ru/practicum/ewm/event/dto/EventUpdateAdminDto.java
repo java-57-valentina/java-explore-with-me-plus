@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,8 +18,13 @@ import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
 @ToString
 public class EventUpdateAdminDto {
 
+    @Size(min = 3, max = 120, message = "The title length must be between 3 and 120 characters")
     private String title;
+
+    @Size(min = 20, max = 2000, message = "The annotation length must be between 20 and 2000 characters")
     private String annotation;
+
+    @Size(min = 20, max = 7000, message = "The description length must be between 20 and 7000 characters")
     private String description;
 
     @JsonProperty("category")
