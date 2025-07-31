@@ -120,15 +120,4 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
     }
-
-    @ExceptionHandler(ConflictException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleConflictException(ConflictException ex) {
-        return ErrorResponse.builder()
-                .message(ex.getMessage())
-                .status(HttpStatus.CONFLICT)
-                .reason("Request conflict.")
-                .timestamp(LocalDateTime.now())
-                .build();
-    }
 }

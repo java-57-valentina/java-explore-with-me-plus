@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.exception.ConflictException;
+import ru.practicum.ewm.exception.ConditionNotMetException;
 import ru.practicum.ewm.exception.ForbiddenException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.participation.dto.ParticipationRequestDto;
@@ -27,7 +27,7 @@ import static ru.practicum.ewm.participation.model.ParticipationRequest.RequestS
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ParticipationRequestServiceImpl implements ParticipationRequestService{
+public class ParticipationRequestServiceImpl implements ParticipationRequestService {
 
     private final UserRepository userRepo;
     private final EventRepository eventRepo;
@@ -39,9 +39,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
      * @param userId  ID пользователя, который хочет подать заявку
      * @param eventId ID события, в котором хотят участвовать
      * @return DTO созданной заявки
-     * @throws NotFoundException    если пользователь или событие не найдены
-     * @throws ConflictException    если заявка уже существует, или инициатор пытается участвовать в своём событии,
-     *                              или событие не опубликовано, или достигнут лимит участников
+     * @throws NotFoundException если пользователь или событие не найдены
+     * @throws ConditionNotMetException если заявка уже существует, или инициатор пытается участвовать в своём событии,
+     *                           или событие не опубликовано, или достигнут лимит участников
      */
     @Transactional
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
@@ -77,7 +77,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getUserRequests(Long userId) {
         if (!userRepo.existsById(userId)) {
-            throw new NotFoundException("Пользователь с id=" + userId + " не найден.");
+            throw new NotFoundException("User", userId);
         }
         return requestRepo.findAllByRequesterId(userId).stream()
                 .map(ParticipationRequestMapper::toDto)
@@ -98,7 +98,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         log.info("Пользователь {} отменяет заявку с ID {}", userId, requestId);
 
         ParticipationRequest request = requestRepo.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("Заявка не найдена."));
+                .orElseThrow(() -> new NotFoundException("ParticipationRequest", requestId));
 
         if (!request.getRequester().getId().equals(userId)) {
             throw new ForbiddenException("Только автор заявки может её отменить.");
@@ -111,33 +111,33 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     // Вспомогательный метод — получаем пользователя из базы, иначе кидаем NotFoundException.
     private User getUserById(Long userId) {
         return userRepo.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден."));
+                .orElseThrow(() -> new NotFoundException("User", userId));
     }
 
     // Аналогично, получаем событие из базы или кидаем исключение.
     private Event getEventById(Long eventId) {
         return eventRepo.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Событие не найдено."));
+                .orElseThrow(() -> new NotFoundException("Event", eventId));
     }
 
     // Проверка: заявка уже существует? Если да — кидаем ошибку (не надо дублировать).
     private void checkRequestNotExists(Long userId, Long eventId) {
         if (requestRepo.existsByRequesterIdAndEventId(userId, eventId)) {
-            throw new ConflictException("Заявка на участие уже отправлена.");
+            throw new ConditionNotMetException("Заявка на участие уже отправлена.");
         }
     }
 
     // Проверяем, что инициатор события не пытается подать заявку на своё событие (это нечестно).
     private void checkNotEventInitiator(Long userId, Event event) {
         if (event.getInitiator().getId().equals(userId)) {
-            throw new ConflictException("Инициатор не может участвовать в своём событии.");
+            throw new ConditionNotMetException("Инициатор не может участвовать в своём событии.");
         }
     }
 
     // Проверяем, что событие опубликовано (в смысле — не в черновике и не отменено).
     private void checkEventIsPublished(Event event) {
         if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new ConflictException("Нельзя участвовать в неопубликованном событии.");
+            throw new ConditionNotMetException("Нельзя участвовать в неопубликованном событии.");
         }
     }
 
@@ -145,7 +145,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private void checkParticipantLimit(Event event, Long eventId) {
         long confirmed = requestRepo.countByEventIdAndStatus(eventId, CONFIRMED);
         if (event.getParticipantLimit() > 0 && confirmed >= event.getParticipantLimit()) {
-            throw new ConflictException("Лимит участников события достигнут.");
+            throw new ConditionNotMetException("Лимит участников события достигнут.");
         }
     }
 
