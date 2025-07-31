@@ -2,7 +2,6 @@ package ru.practicum.ewm.event.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.category.model.Category;
@@ -22,7 +21,6 @@ import ru.practicum.ewm.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -175,14 +173,6 @@ public class EventServiceImpl implements EventService {
     }
 
 
-    @Override
-    public Collection<EventDtoOut> findFullEventsBy(EventFilter filter) {
-        return findBy(filter).stream()
-                .map(EventMapper::toDto)
-                .toList();
-    }
-
-
     private Collection<Event> findBy(EventFilter filter) {
         log.debug("findBy EventFilter: {}", filter);
         Specification<Event> spec = buildSpecification(filter);
@@ -205,7 +195,6 @@ public class EventServiceImpl implements EventService {
 
         return spec;
     }
-
 
     private Specification<Event> buildSpecification(EventFilter filter) {
         Specification<Event> spec = Specification

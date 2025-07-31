@@ -21,8 +21,6 @@ public interface EventService {
     Collection<EventShortDtoOut> findShortEventsBy(EventFilter filter);
 
     Collection<EventDtoOut> findFullEventsBy(EventAdminFilter filter);
-    Collection<EventDtoOut> findFullEventsBy(EventFilter filter);
 
     Collection<EventShortDtoOut> getEventsCreatedByUser(Long userId, Integer offset, Integer limit);
-
 }
