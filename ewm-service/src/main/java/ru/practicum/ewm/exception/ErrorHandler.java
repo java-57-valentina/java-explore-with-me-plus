@@ -49,6 +49,28 @@ public class ErrorHandler {
                 .build();
     }
 
+    @ExceptionHandler(ConditionNotMetException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleConditionNotMetException(ConditionNotMetException ex) {
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.CONFLICT)
+                .reason("Condition not met.")
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler(NoAccessException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleNoAccessException(NoAccessException ex) {
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.FORBIDDEN)
+                .reason("No access.")
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
