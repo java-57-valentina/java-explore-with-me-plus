@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
+import static ru.practicum.ewm.constants.Constants.STATS_EVENTS_URL;
 
 @Slf4j
 @Validated
@@ -92,7 +93,7 @@ public class PublicEventController {
     }
 
     private void writeStatisticsByIds(Collection<Long> ids, String ip) {
-        writeStatisticsByUris(ids.stream().map(this::toUri).toList(), ip);
+        writeStatisticsByUris(ids.stream().map(id -> STATS_EVENTS_URL + id).toList(), ip);
     }
 
     private void writeStatisticsByUris(Collection<String> uris, String ip) {
@@ -103,9 +104,5 @@ public class PublicEventController {
         } catch (StatsClientException ex) {
             log.error(ex.getMessage());
         }
-    }
-
-    private String toUri(Long id) {
-        return "/events/" + id;
     }
 }

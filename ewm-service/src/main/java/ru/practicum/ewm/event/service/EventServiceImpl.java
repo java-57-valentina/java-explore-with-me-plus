@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ru.practicum.ewm.constants.Constants.STATS_EVENTS_URL;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -287,7 +289,7 @@ public class EventServiceImpl implements EventService {
             stats = statsClient.getStats(
                     LocalDateTime.now().minusYears(10),
                     LocalDateTime.now().plusYears(10),
-                    ids.stream().map(id -> "/events/" + id).toList(),
+                    ids.stream().map(id -> STATS_EVENTS_URL + id).toList(),
                     true);
         } catch (StatsClientException ex) {
             log.error(ex.getMessage());
@@ -305,7 +307,7 @@ public class EventServiceImpl implements EventService {
         return ids.stream()
                 .collect(Collectors.toMap(
                         num -> num,
-                        num -> hits.getOrDefault("/events/" + num, 0)
+                        num -> hits.getOrDefault(STATS_EVENTS_URL + num, 0)
                 ));
     }
 
