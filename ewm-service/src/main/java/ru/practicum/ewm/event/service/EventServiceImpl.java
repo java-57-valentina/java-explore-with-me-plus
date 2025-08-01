@@ -183,7 +183,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Collection<EventShortDtoOut> findShortEventsBy(EventFilter filter) {
-        Specification<Event> spec = buildSpecification(filter);
+        Specification<Event> spec = EventRepository.Predicates.buildSpecification(filter);
         return findBy(spec, filter.getPageable()).stream()
                 .map(EventMapper::toShortDto)
                 .toList();
@@ -191,7 +191,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Collection<EventDtoOut> findFullEventsBy(EventAdminFilter filter) {
-        Specification<Event> spec = buildSpecification(filter);
+        Specification<Event> spec = EventRepository.Predicates.buildSpecification(filter);
         return findBy(spec, filter.getPageable()).stream()
                 .map(EventMapper::toDto)
                 .toList();
@@ -203,30 +203,6 @@ public class EventServiceImpl implements EventService {
         enrichWithConfirmedRequestsCount(events);
         enrichWithViewsCount(events);
         return events;
-    }
-
-    private Specification<Event> buildSpecification(EventAdminFilter filter) {
-        Specification<Event> spec = Specification
-                .where(EventSpecifications.withUsers(filter.getUsers()))
-                .and(EventSpecifications.withCategoriesIn(filter.getCategories()))
-                .and(EventSpecifications.withStatesIn(filter.getStates()))
-                .and(EventSpecifications.withRangeStart(filter.getRangeStart()))
-                .and(EventSpecifications.withRangeEnd(filter.getRangeEnd()));
-
-        return spec;
-    }
-
-    private Specification<Event> buildSpecification(EventFilter filter) {
-        Specification<Event> spec = Specification
-                .where(EventSpecifications.withTextContains(filter.getText()))
-                .and(EventSpecifications.withCategoriesIn(filter.getCategories()))
-                .and(EventSpecifications.withPaid(filter.getPaid()))
-                .and(EventSpecifications.withState(filter.getState()))
-                .and(EventSpecifications.withOnlyAvailable(filter.getOnlyAvailable()))
-                .and(EventSpecifications.withRangeStart(filter.getRangeStart()))
-                .and(EventSpecifications.withRangeEnd(filter.getRangeEnd()));
-
-        return spec;
     }
 
 
