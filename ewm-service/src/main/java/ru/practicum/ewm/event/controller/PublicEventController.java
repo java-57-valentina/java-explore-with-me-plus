@@ -16,11 +16,9 @@ import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.exception.InvalidRequestException;
 import ru.practicum.statsclient.StatsClient;
 import ru.practicum.statsclient.StatsClientException;
-import ru.practicum.statsdto.StatsDtoOut;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
 
@@ -71,8 +69,6 @@ public class PublicEventController {
 
         Collection<EventShortDtoOut> events = eventService.findShortEventsBy(filter);
 
-        enrichWithStatistics(events);
-
         Collection<Long> ids = events.stream()
                 .map(EventShortDtoOut::getId)
                 .toList();
@@ -90,30 +86,9 @@ public class PublicEventController {
         log.debug("request for published event id:{}", eventId);
         EventDtoOut dtoOut = eventService.findPublished(eventId);
 
-        Map<String, Integer> hits = getStatistics(List.of(eventId));
-        dtoOut.setViews(hits.getOrDefault(toUri(eventId), 0));
-
         writeStatisticsByIds(List.of(eventId), request.getRemoteAddr());
 
         return dtoOut;
-    }
-
-
-    private void enrichWithStatistics(Collection<EventShortDtoOut> events) {
-        if (events.isEmpty())
-            return;
-
-        Collection<Long> ids = events.stream()
-                .map(EventShortDtoOut::getId)
-                .toList();
-
-        Map<String, Integer> hits = getStatistics(ids);
-        if (hits.isEmpty())
-            return;
-
-        events.forEach(dto ->
-                dto.setViews(hits.getOrDefault(toUri(dto.getId()), 0))
-        );
     }
 
     private void writeStatisticsByIds(Collection<Long> ids, String ip) {
@@ -128,29 +103,6 @@ public class PublicEventController {
         } catch (StatsClientException ex) {
             log.error(ex.getMessage());
         }
-    }
-
-    private Map<String, Integer> getStatistics(Collection<Long> ids) {
-        Collection<StatsDtoOut> stats = List.of();
-
-        try {
-            stats = statsClient.getStats(
-                    LocalDateTime.now().minusYears(10),
-                    LocalDateTime.now().plusYears(10),
-                    ids.stream().map(this::toUri).toList(),
-                    true);
-        } catch (StatsClientException ex) {
-            log.error(ex.getMessage());
-        }
-
-        if (stats.isEmpty())
-            return Map.of();
-
-        return stats.stream()
-                .collect(Collectors.toMap(
-                        StatsDtoOut::getUri,
-                        StatsDtoOut::getHits
-                ));
     }
 
     private String toUri(Long id) {

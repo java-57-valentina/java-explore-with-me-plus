@@ -38,6 +38,7 @@ public class EventMapper {
                 .createdOn(event.getCreatedAt())
                 .state(event.getState())
                 .confirmedRequests(event.getConfirmedRequests())
+                .views(event.getViews())
                 .location(new LocationDto(
                         event.getLocationLat(),
                         event.getLocationLon()))
@@ -56,6 +57,7 @@ public class EventMapper {
                 .eventDate(event.getEventDate())
                 .initiator(UserMapper.toDto(event.getInitiator()))
                 .confirmedRequests(event.getConfirmedRequests())
+                .views(event.getViews())
                 .build();
     }
 }

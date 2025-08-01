@@ -22,6 +22,9 @@ import ru.practicum.ewm.participation.model.RequestsCount;
 import ru.practicum.ewm.participation.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
+import ru.practicum.statsclient.StatsClient;
+import ru.practicum.statsclient.StatsClientException;
+import ru.practicum.statsdto.StatsDtoOut;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -29,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static ru.practicum.ewm.participation.model.ParticipationRequest.RequestStatus.CONFIRMED;
 
 @Slf4j
 @Service
@@ -45,6 +46,8 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ParticipationRequestRepository requestRepository;
+
+    private final StatsClient statsClient;
 
 
     @Override
@@ -151,11 +154,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDtoOut findPublished(Long eventId) {
+
         Event event = eventRepository.findPublishedById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event", eventId));
 
-        Integer confirmed = requestRepository.countByEventIdAndStatus(eventId, CONFIRMED);
-        event.setConfirmedRequests(confirmed);
+        enrichWithConfirmedRequestsCount(List.of(event));
+        enrichWithViewsCount(List.of(event));
+
         return EventMapper.toDto(event);
     }
 
@@ -168,8 +173,8 @@ public class EventServiceImpl implements EventService {
             throw new NoAccessException("Only initiator can view this event");
         }
 
-        Integer confirmed = requestRepository.countByEventIdAndStatus(eventId, CONFIRMED);
-        event.setConfirmedRequests(confirmed);
+        enrichWithConfirmedRequestsCount(List.of(event));
+        enrichWithViewsCount(List.of(event));
 
         return EventMapper.toDto(event);
     }
@@ -194,6 +199,7 @@ public class EventServiceImpl implements EventService {
     private Collection<Event> findBy(Specification<Event> spec, Pageable pageable) {
         Collection<Event> events = eventRepository.findAll(spec, pageable).getContent();
         enrichWithConfirmedRequestsCount(events);
+        enrichWithViewsCount(events);
         return events;
     }
 
@@ -229,6 +235,7 @@ public class EventServiceImpl implements EventService {
 
         Collection<Event> events = eventRepository.findByInitiatorId(userId, offset, limit);
         enrichWithConfirmedRequestsCount(events);
+        enrichWithViewsCount(events);
 
         return events.stream()
                 .map(EventMapper::toShortDto)
@@ -253,6 +260,53 @@ public class EventServiceImpl implements EventService {
         events.forEach(e ->
                 e.setConfirmedRequests(counts.getOrDefault(e.getId(), 0))
         );
+    }
+
+    private void enrichWithViewsCount(Collection<Event> events) {
+        if (events.isEmpty())
+            return;
+
+        Map<Long, Integer> hitsMap = getStatistics(events.stream()
+                .map(Event::getId)
+                .toList());
+
+        if (hitsMap.isEmpty())
+            return;
+
+        events.forEach(dto ->
+                dto.setViews(hitsMap.getOrDefault(dto.getId(), 0))
+        );
+    }
+
+    private Map<Long, Integer> getStatistics(Collection<Long> ids) {
+        Collection<StatsDtoOut> stats = List.of();
+        if (ids.isEmpty())
+            return Map.of();
+
+        try {
+            stats = statsClient.getStats(
+                    LocalDateTime.now().minusYears(10),
+                    LocalDateTime.now().plusYears(10),
+                    ids.stream().map(id -> "/events/" + id).toList(),
+                    true);
+        } catch (StatsClientException ex) {
+            log.error(ex.getMessage());
+        }
+
+        if (stats.isEmpty())
+            return Map.of();
+
+        Map<String, Integer> hits = stats.stream()
+                .collect(Collectors.toMap(
+                        StatsDtoOut::getUri,
+                        StatsDtoOut::getHits
+                ));
+
+        return ids.stream()
+                .collect(Collectors.toMap(
+                        num -> num,
+                        num -> hits.getOrDefault("/events/" + num, 0)
+                ));
     }
 
     private void validateEventDate(LocalDateTime eventDate, EventState state) {

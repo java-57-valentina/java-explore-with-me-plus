@@ -77,4 +77,8 @@ public class Event {
     @Transient
     @Builder.Default
     private Integer confirmedRequests = 0;
+
+    @Transient
+    @Builder.Default
+    private Integer views = 0;
 }

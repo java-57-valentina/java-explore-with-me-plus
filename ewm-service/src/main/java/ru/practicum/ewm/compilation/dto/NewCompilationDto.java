@@ -32,6 +32,7 @@ public class NewCompilationDto {
     /**
      * Список уникальных идентификаторов событий входящих в подборку.
      */
+    @Builder.Default
     @NotNull(message = "Список событий не может быть null")
     private Set<@NotNull(message = "Идентификатор события не может быть пустым") Long> events = Set.of();
 }
