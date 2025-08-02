@@ -20,6 +20,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
 public abstract class StatsClient {
+
     private final RestClient restClient;
     private final String serverUrl;
 
@@ -49,13 +50,17 @@ public abstract class StatsClient {
     }
 
     public void hit(HitDto hitDto) throws StatsClientException {
+
         try {
             restClient.post()
                     .uri(HIT_ENDPOINT)
                     .contentType(APPLICATION_JSON)
                     .body(hitDto)
-                    .retrieve();
+                    .retrieve()
+                    .toBodilessEntity();
+
         } catch (ResourceAccessException e) {
+            log.error(e.getMessage());
             throw new StatsClientException("Connection to stats service failed: " + e.getMessage());
         } catch (Exception e) {
             log.error("Unexpected error in hit(): {}", e.getMessage());
