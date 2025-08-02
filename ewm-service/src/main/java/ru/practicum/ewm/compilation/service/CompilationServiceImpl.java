@@ -135,9 +135,6 @@ public class CompilationServiceImpl implements CompilationService {
             Set<Event> events = new HashSet<>(eventRepository.findAllById(dto.getEvents()));
             compilation.setEvents(events);
         }
-
-        compilation = compilationRepository.save(compilation);
-
         return CompilationMapper.toDto(compilation);
     }
 }

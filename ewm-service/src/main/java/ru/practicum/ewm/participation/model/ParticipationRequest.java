@@ -32,11 +32,4 @@ public class ParticipationRequest {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RequestStatus status;
-
-    public enum RequestStatus {
-        PENDING,
-        CONFIRMED,
-        REJECTED,
-        CANCELED
-    }
 }

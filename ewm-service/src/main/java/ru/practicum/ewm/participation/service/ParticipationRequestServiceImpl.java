@@ -16,7 +16,7 @@ import ru.practicum.ewm.participation.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.participation.dto.ParticipationRequestDto;
 import ru.practicum.ewm.participation.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.participation.model.ParticipationRequest;
-import ru.practicum.ewm.participation.model.ParticipationRequest.RequestStatus;
+import ru.practicum.ewm.participation.model.RequestStatus;
 import ru.practicum.ewm.participation.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
@@ -26,8 +26,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.practicum.ewm.participation.model.ParticipationRequest.RequestStatus.CANCELED;
-import static ru.practicum.ewm.participation.model.ParticipationRequest.RequestStatus.CONFIRMED;
+import static ru.practicum.ewm.participation.model.RequestStatus.CANCELED;
+import static ru.practicum.ewm.participation.model.RequestStatus.CONFIRMED;
 
 @Slf4j
 @Service
