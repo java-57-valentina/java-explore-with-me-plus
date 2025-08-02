@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +45,7 @@ public class PublicEventController {
     // Получение событий с возможностью фильтрации
     @GetMapping
     public Collection<EventShortDtoOut> getEvents(
+            @Size(min = 3, max = 1000, message = "Текст должен быть длиной от 3 до 1000 символов")
             @RequestParam(required = false) String text,
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false) Boolean paid,
@@ -54,9 +57,6 @@ public class PublicEventController {
             @RequestParam(defaultValue = "10") Integer size,
             HttpServletRequest request) {
 
-        if (text != null && (text.length() < 3 || text.length() > 100)) {
-            throw new InvalidRequestException("Text length must be between 3 and 100 characters.");
-        }
         EventFilter filter = EventFilter.builder()
                 .text(text)
                 .categories(categories)
