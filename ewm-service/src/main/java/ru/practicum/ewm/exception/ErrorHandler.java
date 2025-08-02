@@ -1,5 +1,6 @@
 package ru.practicum.ewm.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -49,9 +50,9 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(ConditionNotMetException.class)
+    @ExceptionHandler({ConditionNotMetException.class, IllegalStateException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleConditionNotMetException(ConditionNotMetException ex) {
+    public ErrorResponse handleConflictExceptions(RuntimeException ex) {
         return ErrorResponse.builder()
                 .message(ex.getMessage())
                 .status(HttpStatus.CONFLICT)
@@ -78,6 +79,17 @@ public class ErrorHandler {
                 .message("Required parameter '" + ex.getParameterName() + "' is missing")
                 .reason("Missing parameter.")
                 .status(HttpStatus.BAD_REQUEST)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleConstraintViolationException(ConstraintViolationException ex) {
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.CONFLICT)
+                .reason("Constraint violation")
                 .timestamp(LocalDateTime.now())
                 .build();
     }
