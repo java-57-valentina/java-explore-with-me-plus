@@ -30,4 +30,6 @@ public interface EventRepository extends
         WHERE e.id = :id AND e.state = 'PUBLISHED'
         """)
     Optional<Event> findPublishedById(@Param("id") Long id);
+
+    boolean existsByCategoryId(Long categoryId);
 }
