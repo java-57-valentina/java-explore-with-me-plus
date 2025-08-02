@@ -1,5 +1,7 @@
 package ru.practicum.ewm.event.service;
 
+import java.util.Objects;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -168,7 +170,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDtoOut find(Long userId, Long eventId) {
-        User user = getUser(userId);
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("User", userId);
+        }
+
         Event event = getEvent(eventId);
 
         if (!event.getInitiator().getId().equals(userId)) {
@@ -206,34 +211,42 @@ public class EventServiceImpl implements EventService {
     }
 
     private Specification<Event> buildSpecification(EventAdminFilter filter) {
-        Specification<Event> spec = Specification
-                .where(EventSpecifications.withUsers(filter.getUsers()))
-                .and(EventSpecifications.withCategoriesIn(filter.getCategories()))
-                .and(EventSpecifications.withStatesIn(filter.getStates()))
-                .and(EventSpecifications.withRangeStart(filter.getRangeStart()))
-                .and(EventSpecifications.withRangeEnd(filter.getRangeEnd()));
-
-        return spec;
+        return Stream.of(
+                        optionalSpec(EventSpecifications.withUsers(filter.getUsers())),
+                        optionalSpec(EventSpecifications.withCategoriesIn(filter.getCategories())),
+                        optionalSpec(EventSpecifications.withStatesIn(filter.getStates())),
+                        optionalSpec(EventSpecifications.withRangeStart(filter.getRangeStart())),
+                        optionalSpec(EventSpecifications.withRangeEnd(filter.getRangeEnd()))
+                )
+                .filter(Objects::nonNull)
+                .reduce(Specification::and)
+                .orElse((root, query, cb) -> cb.conjunction());
     }
 
     private Specification<Event> buildSpecification(EventFilter filter) {
-        Specification<Event> spec = Specification
-                .where(EventSpecifications.withTextContains(filter.getText()))
-                .and(EventSpecifications.withCategoriesIn(filter.getCategories()))
-                .and(EventSpecifications.withPaid(filter.getPaid()))
-                .and(EventSpecifications.withState(filter.getState()))
-                .and(EventSpecifications.withOnlyAvailable(filter.getOnlyAvailable()))
-                .and(EventSpecifications.withRangeStart(filter.getRangeStart()))
-                .and(EventSpecifications.withRangeEnd(filter.getRangeEnd()));
+        return Stream.of(
+                        optionalSpec(EventSpecifications.withTextContains(filter.getText())),
+                        optionalSpec(EventSpecifications.withCategoriesIn(filter.getCategories())),
+                        optionalSpec(EventSpecifications.withPaid(filter.getPaid())),
+                        optionalSpec(EventSpecifications.withState(filter.getState())),
+                        optionalSpec(EventSpecifications.withOnlyAvailable(filter.getOnlyAvailable())),
+                        optionalSpec(EventSpecifications.withRangeStart(filter.getRangeStart())),
+                        optionalSpec(EventSpecifications.withRangeEnd(filter.getRangeEnd()))
+                )
+                .filter(Objects::nonNull)
+                .reduce(Specification::and)
+                .orElse((root, query, cb) -> cb.conjunction());
+    }
 
+    private static <T> Specification<T> optionalSpec(Specification<T> spec) {
         return spec;
     }
 
-
     @Override
     public Collection<EventShortDtoOut> findByInitiator(Long userId, Integer offset, Integer limit) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User", userId));
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("User", userId);
+        }
 
         Collection<Event> events = eventRepository.findByInitiatorId(userId, offset, limit);
         enrichWithConfirmedRequestsCount(events);

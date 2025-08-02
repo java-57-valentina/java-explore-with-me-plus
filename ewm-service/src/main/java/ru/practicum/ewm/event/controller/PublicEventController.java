@@ -2,12 +2,19 @@ package ru.practicum.ewm.event.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Min;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.event.dto.EventDtoOut;
 import ru.practicum.ewm.event.dto.EventShortDtoOut;
 import ru.practicum.ewm.event.model.EventFilter;
@@ -16,9 +23,6 @@ import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.exception.InvalidRequestException;
 import ru.practicum.statsclient.StatsClient;
 import ru.practicum.statsclient.StatsClientException;
-
-import java.time.LocalDateTime;
-import java.util.*;
 
 import static ru.practicum.ewm.constants.Constants.DATE_TIME_FORMAT;
 import static ru.practicum.ewm.constants.Constants.STATS_EVENTS_URL;
@@ -50,6 +54,9 @@ public class PublicEventController {
             @RequestParam(defaultValue = "10") Integer size,
             HttpServletRequest request) {
 
+        if (text != null && (text.length() < 3 || text.length() > 100)) {
+            throw new InvalidRequestException("Text length must be between 3 and 100 characters.");
+        }
         EventFilter filter = EventFilter.builder()
                 .text(text)
                 .categories(categories)
