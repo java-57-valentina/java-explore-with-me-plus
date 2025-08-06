@@ -65,6 +65,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public LocationFullDtoOut update(Long id, LocationUpdateAdminDto dto) {
+        log.info("try update location by admin: {}", dto);
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Location", id));
 
@@ -80,7 +81,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional
-    public LocationDtoOut update(Long id, Long userId, LocationUpdateUserDto dto) {
+    public LocationFullDtoOut update(Long id, Long userId, LocationUpdateUserDto dto) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Location", id));
 
@@ -97,11 +98,12 @@ public class LocationServiceImpl implements LocationService {
         Optional.ofNullable(dto.getLatitude()).ifPresent(location::setLatitude);
         Optional.ofNullable(dto.getLongitude()).ifPresent(location::setLongitude);
 
-        return LocationMapper.toDto(location);
+        return LocationMapper.toFullDto(location);
     }
 
 
     private void changeLocationState(Location location, LocationState state) {
+        log.info("changeLocationState id:{} state: {} -> {}", location.getId(), location.getState(), state);
         if (location.getState() == state)
             return;
 
@@ -131,6 +133,20 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Collection<LocationFullDtoOut> findAll() {
         return locationRepository.findAll().stream()
+                .map(LocationMapper::toFullDto)
+                .toList();
+    }
+
+    @Override
+    public Collection<LocationDtoOut> findAllApproved() {
+        return locationRepository.findAllByState(LocationState.APPROVED).stream()
+                .map(LocationMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public Collection<LocationFullDtoOut> findAllByUser(Long userId) {
+        return locationRepository.findAllByCreatorId(userId).stream()
                 .map(LocationMapper::toFullDto)
                 .toList();
     }

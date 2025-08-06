@@ -4,12 +4,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.core5.http.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.location.dto.LocationCreateDto;
 import ru.practicum.ewm.location.dto.LocationDtoOut;
+import ru.practicum.ewm.location.dto.LocationFullDtoOut;
+import ru.practicum.ewm.location.dto.LocationUpdateUserDto;
 import ru.practicum.ewm.location.service.LocationService;
 
 import java.util.Collection;
@@ -41,13 +42,12 @@ public class PrivateLocationController {
      * Локация автоматически переводится в статус PENDING
      * @return DTO обновленной локации
      */
-    // TODO:
     @PatchMapping("/{id}")
-    Collection<LocationDtoOut> update(@PathVariable @Min(1) Long userId,
-                                      @PathVariable @Min(1) Long id)
-            throws NotImplementedException {
+    LocationFullDtoOut update(@PathVariable @Min(1) Long userId,
+                                      @PathVariable @Min(1) Long id,
+                                      @RequestBody @Valid LocationUpdateUserDto dto) {
         log.debug("request for update location id: {} from user:{}", id, userId);
-        throw new NotImplementedException("Method update() in AdminLocationController is not implemented");
+        return locationService.update(id, userId, dto);
     }
 
     /**
@@ -58,9 +58,9 @@ public class PrivateLocationController {
     //  1. пагинация
     //  2. фильтрация по статусу, имени, координатам (с неким радиусом)
     @GetMapping
-    Collection<LocationDtoOut> getAll(@PathVariable @Min(1) Long userId) throws NotImplementedException {
+    Collection<LocationFullDtoOut> getAll(@PathVariable @Min(1) Long userId) {
         log.debug("request for getting all locations of user: {}", userId);
-        throw new NotImplementedException("Method getAll() in PrivateLocationController is not implemented");
+        return locationService.findAllByUser(userId);
     }
 
     /**

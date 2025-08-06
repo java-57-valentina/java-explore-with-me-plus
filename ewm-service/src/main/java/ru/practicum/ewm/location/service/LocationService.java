@@ -1,5 +1,6 @@
 package ru.practicum.ewm.location.service;
 
+import jakarta.validation.constraints.Min;
 import ru.practicum.ewm.location.dto.*;
 import ru.practicum.ewm.location.model.Location;
 
@@ -13,9 +14,13 @@ public interface LocationService {
 
     LocationFullDtoOut update(Long id, LocationUpdateAdminDto dto);
 
-    LocationDtoOut update(Long id, Long userId, LocationUpdateUserDto dto);
+    LocationFullDtoOut update(Long id, Long userId, LocationUpdateUserDto dto);
 
     Collection<LocationFullDtoOut> findAll();
+
+    Collection<LocationDtoOut> findAllApproved();
+
+    Collection<LocationFullDtoOut> findAllByUser(@Min(1) Long userId);
 
     void delete(Long id);
 
@@ -24,4 +29,5 @@ public interface LocationService {
     Double getDistance(Long id1, Long id2);
 
     Location getOrCreateLocation(LocationDto location);
+
 }
