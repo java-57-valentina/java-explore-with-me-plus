@@ -12,4 +12,8 @@ public interface LocationService {
     LocationDtoOut addLocationByAdmin(LocationCreateDto dto);
 
     Collection<LocationDtoOut> findAll();
+
+    void delete(Long id);
+
+    Double getDistance(Long id1, Long id2);
 }

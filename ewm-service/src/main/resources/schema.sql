@@ -95,3 +95,21 @@ CREATE TABLE IF NOT EXISTS participation_requests
     CONSTRAINT fk_event1 FOREIGN KEY (event_id) REFERENCES events (id),
     CONSTRAINT chk_status CHECK (status IN ('PENDING', 'CONFIRMED', 'REJECTED', 'CANCELED'))
 );
+
+CREATE OR REPLACE FUNCTION calculate_distance_meters(
+    lat1 double precision,
+    lon1 double precision,
+    lat2 double precision,
+    lon2 double precision
+) RETURNS double precision AS $$
+    SELECT 6371000 * 2 * ATAN2(
+        SQRT(
+            SIN(RADIANS(lat2 - lat1)/2)^2 +
+            COS(RADIANS(lat1)) * COS(RADIANS(lat2)) * SIN(RADIANS(lon2 - lon1)/2)^2
+        ),
+        SQRT(1 - (
+            SIN(RADIANS(lat2 - lat1)/2)^2 +
+            COS(RADIANS(lat1)) * COS(RADIANS(lat2)) * SIN(RADIANS(lon2 - lon1)/2)^2
+        ))
+    )
+$$ LANGUAGE SQL;

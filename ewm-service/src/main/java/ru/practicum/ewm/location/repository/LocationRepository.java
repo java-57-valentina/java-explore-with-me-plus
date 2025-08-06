@@ -1,7 +1,30 @@
 package ru.practicum.ewm.location.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.practicum.ewm.location.model.Location;
 
+import java.util.Optional;
+
 public interface LocationRepository extends JpaRepository<Location, Long> {
+
+    @Query(value = """
+        SELECT * FROM locations l
+        WHERE l.name = :name
+            AND calculate_distance_meters(:lat, :lon, l.latitude, l.longitude) < 100
+        LIMIT 1
+        """, nativeQuery = true)
+    Optional<Location> findDuplicates(
+            @Param("name") String name,
+            @Param("lat") double lat,
+            @Param("lon") double lon,
+            @Param("radius") double radius
+    );
+
+    @Query(value = "SELECT * FROM calculate_distance_meters(:lat1, :lon1, :lat2, :lon2)", nativeQuery = true)
+    Double calculateDistanceInMeters(
+            @Param("lat1") double lat1, @Param("lon1") double lon1,
+            @Param("lat2") double lat2, @Param("lon2") double lon2
+    );
 }
