@@ -62,4 +62,15 @@ public class PrivateLocationController {
         log.debug("request for getting all locations of user: {}", userId);
         throw new NotImplementedException("Method getAll() in PrivateLocationController is not implemented");
     }
+
+    /**
+     * Удалить существующую неопубликованную локацию от имени создателя.
+     */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void delete(@PathVariable @Min(1) Long userId,
+                @PathVariable @Min(1) Long id) {
+        log.debug("request for delete location id: {} from user:{}", id, userId);
+        locationService.delete(id, userId);
+    }
 }

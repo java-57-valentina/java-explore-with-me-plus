@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.ConditionNotMetException;
 import ru.practicum.ewm.exception.DuplicateLocationsException;
+import ru.practicum.ewm.exception.NoAccessException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.location.dto.LocationCreateDto;
 import ru.practicum.ewm.location.dto.LocationDtoOut;
+import ru.practicum.ewm.location.dto.LocationUpdateAdminDto;
+import ru.practicum.ewm.location.dto.LocationUpdateUserDto;
 import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.model.LocationState;
@@ -62,6 +65,58 @@ public class LocationServiceImpl implements LocationService {
         return LocationMapper.toDto(saved);
     }
 
+    @Override
+    @Transactional
+    public LocationDtoOut update(Long id, LocationUpdateAdminDto dto) {
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Location", id));
+
+        Optional.ofNullable(dto.getName()).ifPresent(location::setName);
+        Optional.ofNullable(dto.getDescription()).ifPresent(location::setDescription);
+        Optional.ofNullable(dto.getAddress()).ifPresent(location::setAddress);
+        Optional.ofNullable(dto.getLatitude()).ifPresent(location::setLatitude);
+        Optional.ofNullable(dto.getLongitude()).ifPresent(location::setLongitude);
+        Optional.ofNullable(dto.getState()).ifPresent(
+                state -> changeLocationState(location, state));
+
+        return LocationMapper.toDto(location);
+    }
+
+    @Override
+    @Transactional
+    public LocationDtoOut update(Long id, Long userId, LocationUpdateUserDto dto) {
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Location", id));
+
+        if (location.getState() != LocationState.PENDING) {
+            throw new ConditionNotMetException("Cannot update published or rejected location");
+        }
+
+        if (location.getCreator() == null || !location.getCreator().getId().equals(userId)) {
+            throw new NoAccessException("Only creator can edit this location");
+        }
+
+        Optional.ofNullable(dto.getName()).ifPresent(location::setName);
+        Optional.ofNullable(dto.getDescription()).ifPresent(location::setDescription);
+        Optional.ofNullable(dto.getAddress()).ifPresent(location::setAddress);
+        Optional.ofNullable(dto.getLatitude()).ifPresent(location::setLatitude);
+        Optional.ofNullable(dto.getLongitude()).ifPresent(location::setLongitude);
+
+        return LocationMapper.toDto(location);
+    }
+
+
+    private void changeLocationState(Location location, LocationState state) {
+        if (location.getState() == state)
+            return;
+
+        if (state == LocationState.PENDING) {
+            throw new ConditionNotMetException(
+                    String.format("Cannot change state from %s to %s", location.getState(), state));
+        }
+        location.setState(state);
+    }
+
     private static String getDuplicateErrorMessage(@NotNull Location existing) {
         Long id = existing.getId();
         switch (existing.getState()) {
@@ -92,6 +147,27 @@ public class LocationServiceImpl implements LocationService {
         if (existEventsInLocation(id)) {
             throw new ConditionNotMetException("There are events in this location");
         }
+        locationRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id, Long userId) {
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Location", id));
+
+        if (location.getState() == LocationState.APPROVED) {
+            throw new ConditionNotMetException("Cannot delete published location");
+        }
+
+        if (location.getCreator() == null || !location.getCreator().getId().equals(userId)) {
+            throw new NoAccessException("Only creator can delete this location");
+        }
+
+        if (existEventsInLocation(id)) {
+            throw new ConditionNotMetException("There are events in this location");
+        }
+
         locationRepository.deleteById(id);
     }
 

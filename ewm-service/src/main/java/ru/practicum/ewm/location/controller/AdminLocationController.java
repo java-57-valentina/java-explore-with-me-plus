@@ -4,12 +4,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.core5.http.NotImplementedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.location.dto.LocationCreateDto;
 import ru.practicum.ewm.location.dto.LocationDtoOut;
+import ru.practicum.ewm.location.dto.LocationUpdateAdminDto;
 import ru.practicum.ewm.location.service.LocationService;
 
 import java.util.Collection;
@@ -40,12 +40,11 @@ public class AdminLocationController {
      * Локация автоматически переводится в статус APPROVED (или REJECTED, если админ явно указал)
      * @return DTO обновленной локаций
      */
-    // TODO:
     @PatchMapping("/{id}")
-    Collection<LocationDtoOut> update(@PathVariable @Min(1) Long id)
-            throws NotImplementedException {
+    LocationDtoOut update(@PathVariable @Min(1) Long id,
+                                      @RequestBody @Valid LocationUpdateAdminDto dto) {
         log.debug("request for update location id: {} from admin", id);
-        throw new NotImplementedException("Method update() in AdminLocationController is not implemented");
+        return locationService.update(id, dto);
     }
 
     /**
@@ -65,7 +64,6 @@ public class AdminLocationController {
      * Удалить существующую локацию от имени администратора.
      * Удаляется только локация, не имеющая мероприятий
      */
-    // TODO:
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable @Min(1) Long id) {
