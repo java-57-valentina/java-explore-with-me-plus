@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.location.dto.LocationCreateDto;
-import ru.practicum.ewm.location.dto.LocationDtoOut;
 import ru.practicum.ewm.location.dto.LocationFullDtoOut;
 import ru.practicum.ewm.location.dto.LocationUpdateAdminDto;
 import ru.practicum.ewm.location.service.LocationService;
