@@ -6,7 +6,7 @@ import ru.practicum.ewm.event.dto.EventCreateDto;
 import ru.practicum.ewm.event.dto.EventDtoOut;
 import ru.practicum.ewm.event.dto.EventShortDtoOut;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.location.dto.LocationDto;
+import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.user.mapper.UserMapper;
 
 @UtilityClass
@@ -18,8 +18,6 @@ public class EventMapper {
                 .paid(eventDto.getPaid())
                 .eventDate(eventDto.getEventDate())
                 .description(eventDto.getDescription())
-                .locationLat(eventDto.getLocation().getLatitude())
-                .locationLon(eventDto.getLocation().getLongitude())
                 .participantLimit(eventDto.getParticipantLimit())
                 .requestModeration(eventDto.getRequestModeration())
                 .build();
@@ -39,10 +37,7 @@ public class EventMapper {
                 .state(event.getState())
                 .confirmedRequests(event.getConfirmedRequests())
                 .views(event.getViews())
-                .location(new LocationDto(
-                        null,
-                        event.getLocationLat(),
-                        event.getLocationLon()))
+                .location(LocationMapper.toDto(event.getLocation()))
                 .participantLimit(event.getParticipantLimit())
                 .requestModeration(event.getRequestModeration())
                 .build();

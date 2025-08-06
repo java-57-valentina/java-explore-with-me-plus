@@ -49,11 +49,10 @@ CREATE TABLE IF NOT EXISTS events (
     description TEXT,
     category_id BIGINT NOT NULL,
     initiator_id BIGINT NOT NULL,
+    location_id BIGINT NOT NULL,
     event_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     published_on TIMESTAMP WITHOUT TIME ZONE,
-    location_lat DOUBLE PRECISION NOT NULL,
-    location_lon DOUBLE PRECISION NOT NULL,
     paid BOOLEAN NOT NULL DEFAULT FALSE,
     participant_limit INT DEFAULT 0,
     request_moderation BOOLEAN DEFAULT TRUE,
@@ -61,6 +60,7 @@ CREATE TABLE IF NOT EXISTS events (
 
     CONSTRAINT pk_events PRIMARY KEY (id),
     CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories (id),
+    CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations (id),
     CONSTRAINT fk_initiator FOREIGN KEY (initiator_id) REFERENCES users (id),
     CONSTRAINT chk_state CHECK (state IN ('PENDING', 'PUBLISHED', 'CANCELED'))
 );

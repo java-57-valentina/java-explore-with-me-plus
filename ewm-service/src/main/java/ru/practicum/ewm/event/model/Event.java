@@ -3,6 +3,7 @@ package ru.practicum.ewm.event.model;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.ewm.category.model.Category;
+import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
@@ -51,11 +52,10 @@ public class Event {
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
-    @Column(name = "location_lat", nullable = false)
-    private Double locationLat;
-
-    @Column(name = "location_lon", nullable = false)
-    private Double locationLon;
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;
 
     @Builder.Default
     @Column(nullable = false)

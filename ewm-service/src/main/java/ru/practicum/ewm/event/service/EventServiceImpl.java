@@ -20,6 +20,8 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.ConditionNotMetException;
 import ru.practicum.ewm.exception.NoAccessException;
 import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.location.model.Location;
+import ru.practicum.ewm.location.service.LocationService;
 import ru.practicum.ewm.participation.model.RequestsCount;
 import ru.practicum.ewm.participation.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.user.model.User;
@@ -51,6 +53,8 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final ParticipationRequestRepository requestRepository;
 
+    private final LocationService locationService;
+
     private final StatsClient statsClient;
 
 
@@ -61,8 +65,10 @@ public class EventServiceImpl implements EventService {
         validateEventDate(eventDto.getEventDate(), EventState.PENDING);
         Category category = getCategory(eventDto.getCategoryId());
         User user = getUser(userId);
+        Location location = locationService.getOrCreateLocation(eventDto.getLocation());
 
         Event event = EventMapper.fromDto(eventDto);
+        event.setLocation(location);
         event.setCategory(category);
         event.setInitiator(user);
 
@@ -90,8 +96,8 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(eventDto.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(eventDto.getPaid()).ifPresent(event::setPaid);
         Optional.ofNullable(eventDto.getLocation()).ifPresent(loc -> {
-            event.setLocationLat(loc.getLatitude());
-            event.setLocationLon(loc.getLongitude());
+            Location location = locationService.getOrCreateLocation(eventDto.getLocation());
+            event.setLocation(location);
         });
         Optional.ofNullable(eventDto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
         Optional.ofNullable(eventDto.getRequestModeration()).ifPresent(event::setRequestModeration);
@@ -134,8 +140,8 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(eventDto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
         Optional.ofNullable(eventDto.getPaid()).ifPresent(event::setPaid);
         Optional.ofNullable(eventDto.getLocation()).ifPresent(loc -> {
-            event.setLocationLat(loc.getLatitude());
-            event.setLocationLon(loc.getLongitude());
+            Location location = locationService.getOrCreateLocation(eventDto.getLocation());
+            event.setLocation(location);
         });
         Optional.ofNullable(eventDto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
         Optional.ofNullable(eventDto.getRequestModeration()).ifPresent(event::setRequestModeration);
@@ -152,8 +158,7 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        Event saved = eventRepository.save(event);
-        return EventMapper.toDto(saved);
+        return EventMapper.toDto(event);
     }
 
     @Override
