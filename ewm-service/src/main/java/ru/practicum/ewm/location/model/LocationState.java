@@ -3,5 +3,6 @@ package ru.practicum.ewm.location.model;
 public enum LocationState {
     PENDING,
     APPROVED,
-    REJECTED
+    REJECTED,
+    AUTO_GENERATED
 }

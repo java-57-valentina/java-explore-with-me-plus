@@ -90,8 +90,8 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(eventDto.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(eventDto.getPaid()).ifPresent(event::setPaid);
         Optional.ofNullable(eventDto.getLocation()).ifPresent(loc -> {
-            event.setLocationLat(loc.getLat());
-            event.setLocationLon(loc.getLon());
+            event.setLocationLat(loc.getLatitude());
+            event.setLocationLon(loc.getLongitude());
         });
         Optional.ofNullable(eventDto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
         Optional.ofNullable(eventDto.getRequestModeration()).ifPresent(event::setRequestModeration);
@@ -134,8 +134,8 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(eventDto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
         Optional.ofNullable(eventDto.getPaid()).ifPresent(event::setPaid);
         Optional.ofNullable(eventDto.getLocation()).ifPresent(loc -> {
-            event.setLocationLat(loc.getLat());
-            event.setLocationLon(loc.getLon());
+            event.setLocationLat(loc.getLatitude());
+            event.setLocationLon(loc.getLongitude());
         });
         Optional.ofNullable(eventDto.getParticipantLimit()).ifPresent(event::setParticipantLimit);
         Optional.ofNullable(eventDto.getRequestModeration()).ifPresent(event::setRequestModeration);

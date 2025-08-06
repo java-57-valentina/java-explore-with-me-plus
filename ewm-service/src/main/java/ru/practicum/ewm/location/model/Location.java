@@ -26,7 +26,6 @@ public class Location {
     @Column(nullable = false)
     String name;
 
-    String description;
     String address;
 
     @Column(nullable = false)

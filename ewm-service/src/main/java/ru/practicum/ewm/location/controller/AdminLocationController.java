@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.location.dto.LocationCreateDto;
 import ru.practicum.ewm.location.dto.LocationDtoOut;
+import ru.practicum.ewm.location.dto.LocationFullDtoOut;
 import ru.practicum.ewm.location.dto.LocationUpdateAdminDto;
 import ru.practicum.ewm.location.service.LocationService;
 
@@ -30,7 +31,7 @@ public class AdminLocationController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    LocationDtoOut create(@RequestBody @Valid LocationCreateDto dto) {
+    LocationFullDtoOut create(@RequestBody @Valid LocationCreateDto dto) {
         log.debug("request for adding location from admin: {}", dto);
         return locationService.addLocationByAdmin(dto);
     }
@@ -41,8 +42,8 @@ public class AdminLocationController {
      * @return DTO обновленной локаций
      */
     @PatchMapping("/{id}")
-    LocationDtoOut update(@PathVariable @Min(1) Long id,
-                                      @RequestBody @Valid LocationUpdateAdminDto dto) {
+    LocationFullDtoOut update(@PathVariable @Min(1) Long id,
+                                     @RequestBody @Valid LocationUpdateAdminDto dto) {
         log.debug("request for update location id: {} from admin", id);
         return locationService.update(id, dto);
     }
@@ -55,7 +56,7 @@ public class AdminLocationController {
     //  1. пагинация
     //  2. фильтрация по статусу, создателям, количеству мероприятий, имени, координатам (с неким радиусом)
     @GetMapping
-    Collection<LocationDtoOut> getAll() {
+    Collection<LocationFullDtoOut> getAll() {
         log.debug("request for getting all locations from admin");
         return locationService.findAll();
     }

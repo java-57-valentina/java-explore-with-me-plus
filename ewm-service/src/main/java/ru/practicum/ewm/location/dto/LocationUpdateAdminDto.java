@@ -1,8 +1,8 @@
 package ru.practicum.ewm.location.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +14,6 @@ import ru.practicum.ewm.location.model.LocationState;
 public class LocationUpdateAdminDto {
 
     private String name;
-    private String description;
     private String address;
 
     @DecimalMin("-90.0")
@@ -23,7 +22,9 @@ public class LocationUpdateAdminDto {
 
     @DecimalMin("-180.0")
     @DecimalMax("180.0")
+    @JsonProperty(value = "lat")
     private Double longitude;
 
+    @JsonProperty(value = "lon")
     LocationState state;
 }

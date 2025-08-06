@@ -1,9 +1,6 @@
 package ru.practicum.ewm.location.dto;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -13,11 +10,12 @@ import lombok.*;
 @AllArgsConstructor
 public class LocationCreateDto {
 
-    // @NotNull(message = "The location name cannot be empty")
     @NotBlank(message = "The location name cannot be blank")
+    @Size(min = 4, max = 64, message = "The location name length must be between 4 and 64 characters")
     private String name;
 
-    private String description;
+//    @NotBlank(message = "The location name cannot be blank")
+//    @Size(min = 4, max = 64, message = "The location name length must be between 4 and 64 characters")
     private String address;
 
     @NotNull(message = "The location latitude cannot be empty")

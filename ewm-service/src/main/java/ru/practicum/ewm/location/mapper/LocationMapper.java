@@ -3,6 +3,7 @@ package ru.practicum.ewm.location.mapper;
 import lombok.experimental.UtilityClass;
 import ru.practicum.ewm.location.dto.LocationCreateDto;
 import ru.practicum.ewm.location.dto.LocationDtoOut;
+import ru.practicum.ewm.location.dto.LocationFullDtoOut;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.user.mapper.UserMapper;
 
@@ -11,7 +12,6 @@ public class LocationMapper {
     public static Location fromDto(LocationCreateDto dto) {
         return Location.builder()
                 .name(dto.getName())
-                .description(dto.getDescription())
                 .address(dto.getAddress())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
@@ -22,7 +22,18 @@ public class LocationMapper {
         return LocationDtoOut.builder()
                 .id(location.getId())
                 .name(location.getName())
-                .description(location.getDescription())
+                .address(location.getAddress())
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                // .creator(location.getCreator() == null ? null : UserMapper.toDto(location.getCreator()))
+                // .state(location.getState())
+                .build();
+    }
+
+    public static LocationFullDtoOut toFullDto(Location location) {
+        return LocationFullDtoOut.builder()
+                .id(location.getId())
+                .name(location.getName())
                 .address(location.getAddress())
                 .latitude(location.getLatitude())
                 .longitude(location.getLongitude())

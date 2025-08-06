@@ -12,7 +12,6 @@ import lombok.ToString;
 public class LocationUpdateUserDto {
 
     private String name;
-    private String description;
     private String address;
 
     @DecimalMin("-90.0")
