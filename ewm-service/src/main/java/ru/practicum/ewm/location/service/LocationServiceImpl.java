@@ -107,6 +107,14 @@ public class LocationServiceImpl implements LocationService {
         return LocationMapper.toPrivateDto(location);
     }
 
+    @Override
+    public LocationDtoOut getApproved(Long id) {
+        Location location = locationRepository.findByIdAndState(id, LocationState.APPROVED)
+                .orElseThrow(() -> new NotFoundException("Location", id));
+
+        return LocationMapper.toDto(location);
+    }
+
 
     private void changeLocationState(Location location, LocationState state) {
         log.info("changeLocationState id:{} state: {} -> {}", location.getId(), location.getState(), state);

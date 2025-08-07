@@ -18,6 +18,8 @@ public interface LocationService {
 
     LocationPrivateDtoOut update(Long id, Long userId, LocationUpdateUserDto dto);
 
+    LocationDtoOut getApproved(Long id);
+
     Collection<LocationFullDtoOut> findAllByFilter(LocationAdminFilter filter);
 
     Collection<LocationPrivateDtoOut> findAllByFilter(Long userId, LocationPrivateFilter filter);

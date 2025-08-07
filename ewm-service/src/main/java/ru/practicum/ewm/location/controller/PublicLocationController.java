@@ -2,6 +2,7 @@ package ru.practicum.ewm.location.controller;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -46,5 +47,12 @@ public class PublicLocationController {
             filter.setZone(new Zone(lat, lon, radius));
 
         return locationService.findAllByFilter(filter);
+    }
+
+    @GetMapping("/{id}")
+    public LocationDtoOut get(@PathVariable @Min(1) Long id) {
+
+        log.debug("request for get location id:{}", id);
+        return locationService.getApproved(id);
     }
 }
