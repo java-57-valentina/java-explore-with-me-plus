@@ -29,7 +29,7 @@ public class LocationAdminFilter {
 
     public Pageable getPageable() {
         if (pageable == null) {
-            Sort sort = Sort.by(Sort.Direction.ASC, "id" );
+            Sort sort = Sort.by(Sort.Direction.ASC, "id");
             this.pageable = PageRequest.of(offset / limit, limit, sort);
         }
         return pageable;

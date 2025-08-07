@@ -12,8 +12,7 @@ import java.util.Optional;
 
 public interface LocationRepository extends
         JpaRepository<Location, Long>,
-        JpaSpecificationExecutor<Location>
-{
+        JpaSpecificationExecutor<Location> {
 
     @Query(value = """
         SELECT * FROM locations l
