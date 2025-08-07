@@ -69,7 +69,6 @@ public class PrivateLocationController {
         log.debug("request for getting all locations of user: {}", userId);
         LocationPrivateFilter filter = LocationPrivateFilter.builder()
                 .text(text)
-                .creator(userId)
                 .state(state)
                 .lat(lat)
                 .lon(lon)

@@ -4,6 +4,7 @@ import ru.practicum.ewm.location.dto.*;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.model.LocationAdminFilter;
 import ru.practicum.ewm.location.model.LocationPrivateFilter;
+import ru.practicum.ewm.location.model.LocationPublicFilter;
 
 import java.util.Collection;
 
@@ -21,8 +22,7 @@ public interface LocationService {
 
     Collection<LocationPrivateDtoOut> findAllByFilter(Long userId, LocationPrivateFilter filter);
 
-    Collection<LocationDtoOut> findAllApproved();
-
+    Collection<LocationDtoOut> findAllByFilter(LocationPublicFilter filter);
 
     void delete(Long id);
 

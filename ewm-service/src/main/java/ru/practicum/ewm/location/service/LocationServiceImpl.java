@@ -12,10 +12,7 @@ import ru.practicum.ewm.exception.NoAccessException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.location.dto.*;
 import ru.practicum.ewm.location.mapper.LocationMapper;
-import ru.practicum.ewm.location.model.Location;
-import ru.practicum.ewm.location.model.LocationAdminFilter;
-import ru.practicum.ewm.location.model.LocationState;
-import ru.practicum.ewm.location.model.LocationPrivateFilter;
+import ru.practicum.ewm.location.model.*;
 import ru.practicum.ewm.location.repository.LocationRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
@@ -146,18 +143,24 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Collection<LocationDtoOut> findAllApproved() {
-        return locationRepository.findAllByState(LocationState.APPROVED).stream()
-                .map(LocationMapper::toDto)
+    public Collection<LocationPrivateDtoOut> findAllByFilter(Long userId, LocationPrivateFilter filter) {
+
+        if (!userRepository.existsById(userId))
+            throw new NotFoundException("User", userId);
+
+        Specification<Location> spec = buildSpecification(userId, filter);
+        List<Location> locations = locationRepository.findAll(spec, filter.getPageable()).getContent();
+        return locations.stream()
+                .map(LocationMapper::toPrivateDto)
                 .toList();
     }
 
     @Override
-    public Collection<LocationPrivateDtoOut> findAllByFilter(Long userId, LocationPrivateFilter filter) {
+    public Collection<LocationDtoOut> findAllByFilter(LocationPublicFilter filter) {
         Specification<Location> spec = buildSpecification(filter);
         List<Location> locations = locationRepository.findAll(spec, filter.getPageable()).getContent();
         return locations.stream()
-                .map(LocationMapper::toPrivateDto)
+                .map(LocationMapper::toDto)
                 .toList();
     }
 
@@ -254,12 +257,23 @@ public class LocationServiceImpl implements LocationService {
                 .orElse((root, query, cb) -> cb.conjunction());
     }
 
-    private Specification<Location> buildSpecification(LocationPrivateFilter filter) {
+    private Specification<Location> buildSpecification(Long userId, LocationPrivateFilter filter) {
         return Stream.of(
+                        optionalSpec(LocationSpecifications.withCreator(userId)),
+                        optionalSpec(LocationSpecifications.withState(filter.getState())),
                         optionalSpec(LocationSpecifications.withTextContains(filter.getText())),
-                        optionalSpec(LocationSpecifications.withCreator(filter.getCreator())),
-                        optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius())),
-                        optionalSpec(LocationSpecifications.withState(filter.getState()))
+                        optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius()))
+                )
+                .filter(Objects::nonNull)
+                .reduce(Specification::and)
+                .orElse((root, query, cb) -> cb.conjunction());
+    }
+
+    private Specification<Location> buildSpecification(LocationPublicFilter filter) {
+        return Stream.of(
+                        optionalSpec(LocationSpecifications.withState(LocationState.APPROVED)),
+                        optionalSpec(LocationSpecifications.withTextContains(filter.getText())),
+                        optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius()))
                 )
                 .filter(Objects::nonNull)
                 .reduce(Specification::and)

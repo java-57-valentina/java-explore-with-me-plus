@@ -1,10 +1,13 @@
 package ru.practicum.ewm.location.controller;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.location.dto.LocationDtoOut;
+import ru.practicum.ewm.location.model.LocationPublicFilter;
 import ru.practicum.ewm.location.service.LocationService;
 
 import java.util.Collection;
@@ -20,14 +23,26 @@ public class PublicLocationController {
 
     /**
      * Получить список APPROVED локаций
+    //  Фильтрация по имени, координатам (с неким радиусом)
      * @return список DTO локаций
      */
-    // TODO:
-    //  1. пагинация
-    //  2. фильтрация по статусу, имени, координатам (с неким радиусом)
     @GetMapping
-    Collection<LocationDtoOut> getAll() {
+    Collection<LocationDtoOut> getAll(
+            @RequestParam(required = false) String text,
+            @RequestParam(required = false) @DecimalMin("-90.0")  @DecimalMax("90.0")  Double lat,
+            @RequestParam(required = false) @DecimalMin("-180.0") @DecimalMax("180.0") Double lon,
+            @RequestParam(defaultValue = "10") Double radius,
+            @RequestParam(defaultValue = "0") Integer offset,
+            @RequestParam(defaultValue = "10") Integer limit) {
         log.debug("request for getting approved locations");
-        return locationService.findAllApproved();
+        LocationPublicFilter filter = LocationPublicFilter.builder()
+                .text(text)
+                .lat(lat)
+                .lon(lon)
+                .radius(radius)
+                .offset(offset)
+                .limit(limit)
+                .build();
+        return locationService.findAllByFilter(filter);
     }
 }

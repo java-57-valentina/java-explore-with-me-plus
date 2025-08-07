@@ -10,9 +10,8 @@ import org.springframework.data.domain.Sort;
 @Builder
 @ToString
 @AllArgsConstructor
-public class LocationPrivateFilter {
+public class LocationPublicFilter {
     private String text;
-    private LocationState state;
     private Double lat;
     private Double lon;
     private Double radius;
