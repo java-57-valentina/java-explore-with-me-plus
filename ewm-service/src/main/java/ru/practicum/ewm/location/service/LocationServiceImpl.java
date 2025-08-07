@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.ConditionNotMetException;
 import ru.practicum.ewm.exception.DuplicateLocationsException;
 import ru.practicum.ewm.exception.NoAccessException;
@@ -33,6 +34,8 @@ public class LocationServiceImpl implements LocationService {
 
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
+    private final EventRepository eventRepository;
+
 
     @Override
     @Transactional
@@ -167,7 +170,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (existEventsInLocation(id)) {
+        if (eventRepository.existsByLocationId(id)) {
             throw new ConditionNotMetException("There are events in this location");
         }
         locationRepository.deleteById(id);
@@ -187,7 +190,7 @@ public class LocationServiceImpl implements LocationService {
             throw new NoAccessException("Only creator can delete this location");
         }
 
-        if (existEventsInLocation(id)) {
+        if (eventRepository.existsByLocationId(id)) {
             throw new ConditionNotMetException("There are events in this location");
         }
 
@@ -237,11 +240,6 @@ public class LocationServiceImpl implements LocationService {
                 .state(LocationState.AUTO_GENERATED)
                 .build();
         return locationRepository.save(location);
-    }
-
-    private boolean existEventsInLocation(Long id) {
-        // Будет реализовано в рамках задачи #60
-        return false;
     }
 
     private Specification<Location> buildSpecification(LocationAdminFilter filter) {

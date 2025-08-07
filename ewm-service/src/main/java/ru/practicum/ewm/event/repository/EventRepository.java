@@ -32,4 +32,6 @@ public interface EventRepository extends
     Optional<Event> findPublishedById(@Param("id") Long id);
 
     boolean existsByCategoryId(Long categoryId);
+
+    boolean existsByLocationId(Long locationId);
 }
