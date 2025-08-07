@@ -93,7 +93,6 @@ public class PublicEventController {
                 .toList();
 
         writeStatisticsByIds(ids, request.getRemoteAddr());
-        writeStatisticsByUris(List.of("/events"), request.getRemoteAddr());
 
         return events;
     }
