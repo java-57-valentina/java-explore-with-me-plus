@@ -206,22 +206,6 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Double getDistance(Long id1, Long id2) {
-        if (id1.equals(id2))
-            return 0.0;
-
-        Location location1 = locationRepository.findById(id1)
-                .orElseThrow(() -> new NotFoundException("Location", id1));
-
-        Location location2 = locationRepository.findById(id2)
-                .orElseThrow(() -> new NotFoundException("Location", id2));
-
-        return locationRepository.calculateDistanceInMeters(
-                location1.getLatitude(), location1.getLongitude(),
-                location2.getLatitude(), location2.getLongitude());
-    }
-
-    @Override
     public Location getOrCreateLocation(LocationDto location) {
 
         if (location.getId() != null) {

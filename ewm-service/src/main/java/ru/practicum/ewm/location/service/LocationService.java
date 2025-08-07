@@ -30,8 +30,6 @@ public interface LocationService {
 
     void delete(Long id, Long userId);
 
-    Double getDistance(Long id1, Long id2);
-
     Location getOrCreateLocation(LocationDto location);
 
 }

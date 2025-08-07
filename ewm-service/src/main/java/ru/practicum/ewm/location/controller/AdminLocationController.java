@@ -56,7 +56,6 @@ public class AdminLocationController {
      * Фильтрация по статусу, создателю, количеству мероприятий, имени, координатам (с неким радиусом)
      * @return список DTO локаций
      */
-    //  2.
     @GetMapping
     Collection<LocationFullDtoOut> getAll(
             @RequestParam(required = false) String text,
@@ -92,18 +91,7 @@ public class AdminLocationController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable @Min(1) Long id) {
-        log.info("request for delete location id:{} from admin", id);
+        log.debug("request for delete location id:{} from admin", id);
         locationService.delete(id);
-    }
-
-    /**
-     * (Для отладки, удалить перед сдачей проекта)
-     * Возвращает расстояние в метрах между координатами
-     */
-    // TODO:
-    @GetMapping("distance/{id1}/{id2}")
-    Double getDistance(@PathVariable @Min(1) Long id1, @PathVariable @Min(1) Long id2) {
-        log.info("request for calcutale distance between locations id:{} and id:{}", id1, id2);
-        return locationService.getDistance(id1, id2);
     }
 }
