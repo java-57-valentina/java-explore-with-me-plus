@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.location.dto.LocationDtoOut;
 import ru.practicum.ewm.location.model.LocationPublicFilter;
+import ru.practicum.ewm.location.model.Zone;
 import ru.practicum.ewm.location.service.LocationService;
 
 import java.util.Collection;
@@ -31,18 +32,19 @@ public class PublicLocationController {
             @RequestParam(required = false) String text,
             @RequestParam(required = false) @DecimalMin("-90.0")  @DecimalMax("90.0")  Double lat,
             @RequestParam(required = false) @DecimalMin("-180.0") @DecimalMax("180.0") Double lon,
-            @RequestParam(defaultValue = "10") Double radius,
+            @RequestParam(defaultValue = "10.0") @DecimalMin("0.0") Double radius,
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(defaultValue = "10") Integer limit) {
         log.debug("request for getting approved locations");
         LocationPublicFilter filter = LocationPublicFilter.builder()
                 .text(text)
-                .lat(lat)
-                .lon(lon)
-                .radius(radius)
                 .offset(offset)
                 .limit(limit)
                 .build();
+
+        if (lat != null && lon != null)
+            filter.setZone(new Zone(lat, lon, radius));
+
         return locationService.findAllByFilter(filter);
     }
 }

@@ -14,9 +14,7 @@ public class LocationAdminFilter {
     private String text;
     private Long creator;
     private LocationState state;
-    private Double lat;
-    private Double lon;
-    private Double radius;
+    private Zone zone;
     private Integer minEvents;
     private Integer maxEvents;
 

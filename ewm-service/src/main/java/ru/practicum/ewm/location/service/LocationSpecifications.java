@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.model.LocationState;
+import ru.practicum.ewm.location.model.Zone;
 
 @UtilityClass
 public class LocationSpecifications {
@@ -73,24 +74,20 @@ public class LocationSpecifications {
         };
     }
 
-    public static Specification<Location> withCoordinates(Double lat, Double lon, Double radius) {
-        if (lat == null || lon == null)
+    public static Specification<Location> withCoordinates(Zone zone) {
+        if (zone == null)
             return null;
 
-        if (radius == null)
-            radius = 0.0;
-
-        Double finalRadius = radius;
         return (root, query, cb) -> {
             Expression<Double> distance = cb.function(
                     "calculate_distance_meters",
                     Double.class,
-                    cb.literal(lat),
-                    cb.literal(lon),
+                    cb.literal(zone.getLatitude()),
+                    cb.literal(zone.getLongitude()),
                     root.get("latitude"),
                     root.get("longitude")
             );
-            return cb.lessThanOrEqualTo(distance, finalRadius);
+            return cb.lessThanOrEqualTo(distance, zone.getRadius());
         };
     }
 }

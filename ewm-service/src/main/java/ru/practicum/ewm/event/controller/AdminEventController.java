@@ -1,6 +1,8 @@
 package ru.practicum.ewm.event.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import ru.practicum.ewm.event.dto.EventUpdateAdminDto;
 import ru.practicum.ewm.event.model.EventAdminFilter;
 import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.service.EventService;
+import ru.practicum.ewm.location.model.Zone;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -35,6 +38,10 @@ public class AdminEventController {
             @RequestParam(required = false) List<EventState> states,
             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeStart,
             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeEnd,
+            @RequestParam(required = false) Long location,
+            @RequestParam(required = false) @DecimalMin("-90.0")  @DecimalMax("90.0")  Double lat,
+            @RequestParam(required = false) @DecimalMin("-180.0") @DecimalMax("180.0") Double lon,
+            @RequestParam(defaultValue = "10.0") @DecimalMin("0.0") Double radius,
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(defaultValue = "10") Integer limit) {
 
@@ -45,9 +52,13 @@ public class AdminEventController {
                 .states(states)
                 .rangeStart(rangeStart)
                 .rangeEnd(rangeEnd)
+                .locationId(location)
                 .from(offset)
                 .size(limit)
                 .build();
+        if (lat != null && lon != null)
+            filter.setZone(new Zone(lat, lon, radius));
+
         return eventService.findFullEventsBy(filter);
     }
 

@@ -14,6 +14,7 @@ import ru.practicum.ewm.location.dto.LocationFullDtoOut;
 import ru.practicum.ewm.location.dto.LocationUpdateAdminDto;
 import ru.practicum.ewm.location.model.LocationAdminFilter;
 import ru.practicum.ewm.location.model.LocationState;
+import ru.practicum.ewm.location.model.Zone;
 import ru.practicum.ewm.location.service.LocationService;
 
 import java.util.Collection;
@@ -63,7 +64,7 @@ public class AdminLocationController {
             @RequestParam(required = false) LocationState state,
             @RequestParam(required = false) @DecimalMin("-90.0")  @DecimalMax("90.0")  Double lat,
             @RequestParam(required = false) @DecimalMin("-180.0") @DecimalMax("180.0") Double lon,
-            @RequestParam(defaultValue = "10") Double radius,
+            @RequestParam(defaultValue = "10.0") @DecimalMin("0.0") Double radius,
             @RequestParam(required = false) Integer minEvents,
             @RequestParam(required = false) Integer maxEvents,
             @RequestParam(defaultValue = "0") Integer offset,
@@ -73,14 +74,14 @@ public class AdminLocationController {
                 .text(text)
                 .creator(user)
                 .state(state)
-                .lat(lat)
-                .lon(lon)
-                .radius(radius)
                 .minEvents(minEvents)
                 .maxEvents(maxEvents)
                 .offset(offset)
                 .limit(limit)
                 .build();
+        if (lat != null && lon != null)
+            filter.setZone(new Zone(lat, lon, radius));
+
         return locationService.findAllByFilter(filter);
     }
 

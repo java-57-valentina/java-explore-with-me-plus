@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.practicum.ewm.location.model.Zone;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +33,12 @@ public class EventFilter {
     private Boolean onlyAvailable = false;
 
     @Builder.Default
+    private EventState state = EventState.PUBLISHED;
+
+    private Long locationId;
+    private Zone zone;
+
+    @Builder.Default
     private String sort = "EVENT_DATE";
 
     @Builder.Default
@@ -41,9 +48,6 @@ public class EventFilter {
     private Integer size = 10;
 
     private Pageable pageable;
-
-    @Builder.Default
-    private EventState state = EventState.PUBLISHED;
 
 
     public Pageable getPageable() {

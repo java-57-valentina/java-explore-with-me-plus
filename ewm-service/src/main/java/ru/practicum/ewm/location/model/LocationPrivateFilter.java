@@ -13,9 +13,7 @@ import org.springframework.data.domain.Sort;
 public class LocationPrivateFilter {
     private String text;
     private LocationState state;
-    private Double lat;
-    private Double lon;
-    private Double radius;
+    private Zone zone;
 
     private Integer offset;
     private Integer limit;

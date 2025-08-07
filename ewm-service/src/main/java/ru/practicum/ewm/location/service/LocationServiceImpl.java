@@ -246,7 +246,7 @@ public class LocationServiceImpl implements LocationService {
         return Stream.of(
                         optionalSpec(LocationSpecifications.withTextContains(filter.getText())),
                         optionalSpec(LocationSpecifications.withCreator(filter.getCreator())),
-                        optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius())),
+                        optionalSpec(LocationSpecifications.withCoordinates(filter.getZone())),
                         optionalSpec(LocationSpecifications.withState(filter.getState())),
                         optionalSpec(LocationSpecifications.withEventsCount(filter.getMinEvents(), filter.getMaxEvents()))
                 )
@@ -260,7 +260,7 @@ public class LocationServiceImpl implements LocationService {
                         optionalSpec(LocationSpecifications.withCreator(userId)),
                         optionalSpec(LocationSpecifications.withState(filter.getState())),
                         optionalSpec(LocationSpecifications.withTextContains(filter.getText())),
-                        optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius()))
+                        optionalSpec(LocationSpecifications.withCoordinates(filter.getZone()))
                 )
                 .filter(Objects::nonNull)
                 .reduce(Specification::and)
@@ -271,7 +271,7 @@ public class LocationServiceImpl implements LocationService {
         return Stream.of(
                         optionalSpec(LocationSpecifications.withState(LocationState.APPROVED)),
                         optionalSpec(LocationSpecifications.withTextContains(filter.getText())),
-                        optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius()))
+                        optionalSpec(LocationSpecifications.withCoordinates(filter.getZone()))
                 )
                 .filter(Objects::nonNull)
                 .reduce(Specification::and)

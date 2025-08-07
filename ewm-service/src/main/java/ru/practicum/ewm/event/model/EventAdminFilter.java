@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.practicum.ewm.location.model.Zone;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +29,9 @@ public class EventAdminFilter {
 
     @DateTimeFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime rangeEnd;
+
+    private Long locationId;
+    private Zone zone;
 
     @Builder.Default
     private Integer from = 0;

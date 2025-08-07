@@ -12,9 +12,7 @@ import org.springframework.data.domain.Sort;
 @AllArgsConstructor
 public class LocationPublicFilter {
     private String text;
-    private Double lat;
-    private Double lon;
-    private Double radius;
+    private Zone zone;
 
     private Integer offset;
     private Integer limit;
