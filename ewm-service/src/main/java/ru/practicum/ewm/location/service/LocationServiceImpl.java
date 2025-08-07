@@ -15,6 +15,7 @@ import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.model.LocationAdminFilter;
 import ru.practicum.ewm.location.model.LocationState;
+import ru.practicum.ewm.location.model.LocationPrivateFilter;
 import ru.practicum.ewm.location.repository.LocationRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
@@ -46,7 +47,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional
-    public LocationDtoOut addLocation(Long userId, LocationCreateDto dto) {
+    public LocationPrivateDtoOut addLocation(Long userId, LocationCreateDto dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User", userId));
 
@@ -64,7 +65,7 @@ public class LocationServiceImpl implements LocationService {
         Location location = LocationMapper.fromDto(dto);
         location.setCreator(user);
         Location saved = locationRepository.save(location);
-        return LocationMapper.toDto(saved);
+        return LocationMapper.toPrivateDto(saved);
     }
 
     @Override
@@ -86,7 +87,7 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional
-    public LocationFullDtoOut update(Long id, Long userId, LocationUpdateUserDto dto) {
+    public LocationPrivateDtoOut update(Long id, Long userId, LocationUpdateUserDto dto) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Location", id));
 
@@ -103,7 +104,7 @@ public class LocationServiceImpl implements LocationService {
         Optional.ofNullable(dto.getLatitude()).ifPresent(location::setLatitude);
         Optional.ofNullable(dto.getLongitude()).ifPresent(location::setLongitude);
 
-        return LocationMapper.toFullDto(location);
+        return LocationMapper.toPrivateDto(location);
     }
 
 
@@ -152,9 +153,11 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Collection<LocationFullDtoOut> findAllByUser(Long userId) {
-        return locationRepository.findAllByCreatorId(userId).stream()
-                .map(LocationMapper::toFullDto)
+    public Collection<LocationPrivateDtoOut> findAllByFilter(Long userId, LocationPrivateFilter filter) {
+        Specification<Location> spec = buildSpecification(filter);
+        List<Location> locations = locationRepository.findAll(spec, filter.getPageable()).getContent();
+        return locations.stream()
+                .map(LocationMapper::toPrivateDto)
                 .toList();
     }
 
@@ -245,6 +248,18 @@ public class LocationServiceImpl implements LocationService {
                         optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius())),
                         optionalSpec(LocationSpecifications.withState(filter.getState())),
                         optionalSpec(LocationSpecifications.withEventsCount(filter.getMinEvents(), filter.getMaxEvents()))
+                )
+                .filter(Objects::nonNull)
+                .reduce(Specification::and)
+                .orElse((root, query, cb) -> cb.conjunction());
+    }
+
+    private Specification<Location> buildSpecification(LocationPrivateFilter filter) {
+        return Stream.of(
+                        optionalSpec(LocationSpecifications.withTextContains(filter.getText())),
+                        optionalSpec(LocationSpecifications.withCreator(filter.getCreator())),
+                        optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius())),
+                        optionalSpec(LocationSpecifications.withState(filter.getState()))
                 )
                 .filter(Objects::nonNull)
                 .reduce(Specification::and)

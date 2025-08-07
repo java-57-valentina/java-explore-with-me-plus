@@ -41,7 +41,6 @@ public class AdminLocationController {
 
     /**
      * Редактировать существующую локацию от имени администратора.
-     * Локация автоматически переводится в статус APPROVED (или REJECTED, если админ явно указал)
      * @return DTO обновленной локаций
      */
     @PatchMapping("/{id}")
@@ -53,9 +52,10 @@ public class AdminLocationController {
 
     /**
      * Получить список локаций от имени администратора.
-     * @return список DTO локаций (во всех статусах)
+     * Фильтрация по статусу, создателю, количеству мероприятий, имени, координатам (с неким радиусом)
+     * @return список DTO локаций
      */
-    //  2. фильтрация по статусу, создателям, количеству мероприятий, имени, координатам (с неким радиусом)
+    //  2.
     @GetMapping
     Collection<LocationFullDtoOut> getAll(
             @RequestParam(required = false) String text,
@@ -94,7 +94,6 @@ public class AdminLocationController {
         log.info("request for delete location id:{} from admin", id);
         locationService.delete(id);
     }
-
 
     /**
      * (Для отладки, удалить перед сдачей проекта)

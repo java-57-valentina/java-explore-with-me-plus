@@ -1,27 +1,28 @@
 package ru.practicum.ewm.location.service;
 
-import jakarta.validation.constraints.Min;
 import ru.practicum.ewm.location.dto.*;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.model.LocationAdminFilter;
+import ru.practicum.ewm.location.model.LocationPrivateFilter;
 
 import java.util.Collection;
 
 public interface LocationService {
 
-    LocationDtoOut addLocation(Long userId, LocationCreateDto dto);
+    LocationPrivateDtoOut addLocation(Long userId, LocationCreateDto dto);
 
     LocationFullDtoOut addLocationByAdmin(LocationCreateDto dto);
 
     LocationFullDtoOut update(Long id, LocationUpdateAdminDto dto);
 
-    LocationFullDtoOut update(Long id, Long userId, LocationUpdateUserDto dto);
+    LocationPrivateDtoOut update(Long id, Long userId, LocationUpdateUserDto dto);
 
     Collection<LocationFullDtoOut> findAllByFilter(LocationAdminFilter filter);
 
+    Collection<LocationPrivateDtoOut> findAllByFilter(Long userId, LocationPrivateFilter filter);
+
     Collection<LocationDtoOut> findAllApproved();
 
-    Collection<LocationFullDtoOut> findAllByUser(@Min(1) Long userId);
 
     void delete(Long id);
 
