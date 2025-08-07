@@ -17,7 +17,6 @@ import ru.practicum.ewm.location.model.LocationState;
 import ru.practicum.ewm.location.service.LocationService;
 
 import java.util.Collection;
-import java.util.List;
 
 @Slf4j
 @Validated
@@ -60,7 +59,7 @@ public class AdminLocationController {
     @GetMapping
     Collection<LocationFullDtoOut> getAll(
             @RequestParam(required = false) String text,
-            @RequestParam(required = false) List<Long> users,
+            @RequestParam(required = false) Long user,
             @RequestParam(required = false) LocationState state,
             @RequestParam(required = false) @DecimalMin("-90.0")  @DecimalMax("90.0")  Double lat,
             @RequestParam(required = false) @DecimalMin("-180.0") @DecimalMax("180.0") Double lon,
@@ -72,7 +71,7 @@ public class AdminLocationController {
         log.debug("request for getting all locations from admin");
         LocationAdminFilter filter = LocationAdminFilter.builder()
                 .text(text)
-                .users(users)
+                .creator(user)
                 .state(state)
                 .lat(lat)
                 .lon(lon)

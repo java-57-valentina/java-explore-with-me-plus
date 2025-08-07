@@ -241,11 +241,10 @@ public class LocationServiceImpl implements LocationService {
     private Specification<Location> buildSpecification(LocationAdminFilter filter) {
         return Stream.of(
                         optionalSpec(LocationSpecifications.withTextContains(filter.getText())),
-                        optionalSpec(LocationSpecifications.withCreatorIn(filter.getUsers())),
+                        optionalSpec(LocationSpecifications.withCreator(filter.getCreator())),
                         optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius())),
                         optionalSpec(LocationSpecifications.withState(filter.getState())),
-                        optionalSpec(LocationSpecifications.withMinEvents(filter.getMinEvents())),
-                        optionalSpec(LocationSpecifications.withMaxEvents(filter.getMaxEvents()))
+                        optionalSpec(LocationSpecifications.withEventsCount(filter.getMinEvents(), filter.getMaxEvents()))
                 )
                 .filter(Objects::nonNull)
                 .reduce(Specification::and)

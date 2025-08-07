@@ -1,12 +1,14 @@
 package ru.practicum.ewm.location.service;
 
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
+import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.location.model.LocationState;
-
-import java.util.Collection;
 
 @UtilityClass
 public class LocationSpecifications {
@@ -22,12 +24,17 @@ public class LocationSpecifications {
                 );
     }
 
-    public static Specification<Location> withCreatorIn(Collection<Long> users) {
-        if (users == null || users.isEmpty())
+    public static Specification<Location> withCreator(Long user) {
+        if (user == null)
             return null;
 
+        if (user == 0) {
+            return (root, query, cb) ->
+                    cb.isNull(root.get("creator").get("id"));
+        }
+
         return (root, query, cb) ->
-                root.get("creator").get("id").in(users);
+                cb.equal(root.get("creator").get("id"), user);
     }
 
     public static Specification<Location> withState(LocationState state) {
@@ -38,12 +45,32 @@ public class LocationSpecifications {
                 cb.equal(root.get("state"), state);
     }
 
-    public static Specification<Location> withMinEvents(Integer minEvents) {
-        return null;
-    }
+    public static Specification<Location> withEventsCount(Integer min, Integer max) {
+        return (root, query, cb) -> {
+            if (min == null && max == null) {
+                return null;
+            }
 
-    public static Specification<Location> withMaxEvents(Integer maxEvents) {
-        return null;
+            assert query != null;
+            Subquery<Long> eventsSubquery = query.subquery(Long.class);
+            Root<Event> eventRoot = eventsSubquery.from(Event.class);
+            eventsSubquery.select(cb.count(eventRoot));
+            eventsSubquery.where(cb.equal(eventRoot.get("location"), root));
+
+            Predicate predicate = null;
+
+            if (min != null) {
+                predicate = cb.greaterThanOrEqualTo(eventsSubquery, min.longValue());
+            }
+
+            if (max != null) {
+                Predicate maxPredicate = cb.lessThanOrEqualTo(eventsSubquery, max.longValue());
+                predicate = predicate == null
+                        ? maxPredicate
+                        : cb.and(predicate, maxPredicate);
+            }
+            return predicate;
+        };
     }
 
     public static Specification<Location> withCoordinates(Double lat, Double lon, Double radius) {

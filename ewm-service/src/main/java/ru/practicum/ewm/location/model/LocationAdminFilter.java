@@ -5,8 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.Collection;
-
 @Getter
 @Setter
 @Builder
@@ -14,7 +12,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class LocationAdminFilter {
     private String text;
-    private Collection<Long> users;
+    private Long creator;
     private LocationState state;
     private Double lat;
     private Double lon;
