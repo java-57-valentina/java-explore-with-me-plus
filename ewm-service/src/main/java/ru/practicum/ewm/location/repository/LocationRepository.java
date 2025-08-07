@@ -1,6 +1,7 @@
 package ru.practicum.ewm.location.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.ewm.location.model.Location;
@@ -9,7 +10,10 @@ import ru.practicum.ewm.location.model.LocationState;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface LocationRepository extends JpaRepository<Location, Long> {
+public interface LocationRepository extends
+        JpaRepository<Location, Long>,
+        JpaSpecificationExecutor<Location>
+{
 
     @Query(value = """
         SELECT * FROM locations l

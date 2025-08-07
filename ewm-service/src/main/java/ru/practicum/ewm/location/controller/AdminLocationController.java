@@ -1,6 +1,8 @@
 package ru.practicum.ewm.location.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.location.dto.LocationCreateDto;
 import ru.practicum.ewm.location.dto.LocationFullDtoOut;
 import ru.practicum.ewm.location.dto.LocationUpdateAdminDto;
+import ru.practicum.ewm.location.model.LocationAdminFilter;
+import ru.practicum.ewm.location.model.LocationState;
 import ru.practicum.ewm.location.service.LocationService;
 
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -51,13 +56,33 @@ public class AdminLocationController {
      * Получить список локаций от имени администратора.
      * @return список DTO локаций (во всех статусах)
      */
-    // TODO:
-    //  1. пагинация
     //  2. фильтрация по статусу, создателям, количеству мероприятий, имени, координатам (с неким радиусом)
     @GetMapping
-    Collection<LocationFullDtoOut> getAll() {
+    Collection<LocationFullDtoOut> getAll(
+            @RequestParam(required = false) String text,
+            @RequestParam(required = false) List<Long> users,
+            @RequestParam(required = false) LocationState state,
+            @RequestParam(required = false) @DecimalMin("-90.0")  @DecimalMax("90.0")  Double lat,
+            @RequestParam(required = false) @DecimalMin("-180.0") @DecimalMax("180.0") Double lon,
+            @RequestParam(defaultValue = "10") Double radius,
+            @RequestParam(required = false) Integer minEvents,
+            @RequestParam(required = false) Integer maxEvents,
+            @RequestParam(defaultValue = "0") Integer offset,
+            @RequestParam(defaultValue = "10") Integer limit) {
         log.debug("request for getting all locations from admin");
-        return locationService.findAll();
+        LocationAdminFilter filter = LocationAdminFilter.builder()
+                .text(text)
+                .users(users)
+                .state(state)
+                .lat(lat)
+                .lon(lon)
+                .radius(radius)
+                .minEvents(minEvents)
+                .maxEvents(maxEvents)
+                .offset(offset)
+                .limit(limit)
+                .build();
+        return locationService.findAllByFilter(filter);
     }
 
     /**

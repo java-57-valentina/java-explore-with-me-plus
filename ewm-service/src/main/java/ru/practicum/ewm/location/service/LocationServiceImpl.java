@@ -3,6 +3,7 @@ package ru.practicum.ewm.location.service;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.ConditionNotMetException;
@@ -12,13 +13,17 @@ import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.location.dto.*;
 import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.location.model.Location;
+import ru.practicum.ewm.location.model.LocationAdminFilter;
 import ru.practicum.ewm.location.model.LocationState;
 import ru.practicum.ewm.location.repository.LocationRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -131,8 +136,10 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Collection<LocationFullDtoOut> findAll() {
-        return locationRepository.findAll().stream()
+    public Collection<LocationFullDtoOut> findAllByFilter(LocationAdminFilter filter) {
+        Specification<Location> spec = buildSpecification(filter);
+        List<Location> locations = locationRepository.findAll(spec, filter.getPageable()).getContent();
+        return locations.stream()
                 .map(LocationMapper::toFullDto)
                 .toList();
     }
@@ -229,5 +236,23 @@ public class LocationServiceImpl implements LocationService {
     private boolean existEventsInLocation(Long id) {
         // Будет реализовано в рамках задачи #60
         return false;
+    }
+
+    private Specification<Location> buildSpecification(LocationAdminFilter filter) {
+        return Stream.of(
+                        optionalSpec(LocationSpecifications.withTextContains(filter.getText())),
+                        optionalSpec(LocationSpecifications.withCreatorIn(filter.getUsers())),
+                        optionalSpec(LocationSpecifications.withCoordinates(filter.getLat(), filter.getLon(), filter.getRadius())),
+                        optionalSpec(LocationSpecifications.withState(filter.getState())),
+                        optionalSpec(LocationSpecifications.withMinEvents(filter.getMinEvents())),
+                        optionalSpec(LocationSpecifications.withMaxEvents(filter.getMaxEvents()))
+                )
+                .filter(Objects::nonNull)
+                .reduce(Specification::and)
+                .orElse((root, query, cb) -> cb.conjunction());
+    }
+
+    private static <T> Specification<T> optionalSpec(Specification<T> spec) {
+        return spec;
     }
 }

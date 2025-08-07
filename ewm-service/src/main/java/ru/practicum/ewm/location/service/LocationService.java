@@ -3,6 +3,7 @@ package ru.practicum.ewm.location.service;
 import jakarta.validation.constraints.Min;
 import ru.practicum.ewm.location.dto.*;
 import ru.practicum.ewm.location.model.Location;
+import ru.practicum.ewm.location.model.LocationAdminFilter;
 
 import java.util.Collection;
 
@@ -16,7 +17,7 @@ public interface LocationService {
 
     LocationFullDtoOut update(Long id, Long userId, LocationUpdateUserDto dto);
 
-    Collection<LocationFullDtoOut> findAll();
+    Collection<LocationFullDtoOut> findAllByFilter(LocationAdminFilter filter);
 
     Collection<LocationDtoOut> findAllApproved();
 
