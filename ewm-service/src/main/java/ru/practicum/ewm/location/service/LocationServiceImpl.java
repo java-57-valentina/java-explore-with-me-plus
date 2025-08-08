@@ -51,16 +51,7 @@ public class LocationServiceImpl implements LocationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User", userId));
 
-        Optional<Location> existing = locationRepository.findDuplicates(
-                dto.getName(),
-                dto.getLatitude(),
-                dto.getLongitude(),
-                NEARBY_RADIUS);
-
-        if (existing.isPresent()) {
-            log.warn("Nearby location: {}", existing.get());
-            throw new DuplicateLocationsException(getDuplicateErrorMessage(existing.get()));
-        }
+        checkForDuplicate(dto.getName(), dto.getLatitude(), dto.getLongitude());
 
         Location location = LocationMapper.fromDto(dto);
         location.setCreator(user);
@@ -99,12 +90,34 @@ public class LocationServiceImpl implements LocationService {
             throw new NoAccessException("Only creator can edit this location");
         }
 
+        boolean needToCheckDuplicates =
+                (dto.getName() != null && !dto.getName().equals(location.getName())) ||
+                (dto.getLatitude() != null && !dto.getLatitude().equals(location.getLatitude())) ||
+                (dto.getLongitude() != null && !dto.getLongitude().equals(location.getLongitude()));
+
+        if (needToCheckDuplicates) {
+            final String name = Optional.ofNullable(dto.getName()).orElse(location.getName());
+            final Double lat = Optional.ofNullable(dto.getLatitude()).orElse(location.getLatitude());
+            final Double lon = Optional.ofNullable(dto.getLongitude()).orElse(location.getLongitude());
+            checkForDuplicate(name, lat, lon);
+        }
+
         Optional.ofNullable(dto.getName()).ifPresent(location::setName);
         Optional.ofNullable(dto.getAddress()).ifPresent(location::setAddress);
         Optional.ofNullable(dto.getLatitude()).ifPresent(location::setLatitude);
         Optional.ofNullable(dto.getLongitude()).ifPresent(location::setLongitude);
 
         return LocationMapper.toPrivateDto(location);
+    }
+
+    private void checkForDuplicate(String name, Double lat, Double lon) {
+        log.debug("need check  for duplicates");
+        Optional<Location> existing = locationRepository.findDuplicates(name, lat, lon, NEARBY_RADIUS);
+
+        if (existing.isPresent()) {
+            log.warn("Nearby location: {}", existing.get());
+            throw new DuplicateLocationsException(getDuplicateErrorMessage(existing.get()));
+        }
     }
 
     @Override
