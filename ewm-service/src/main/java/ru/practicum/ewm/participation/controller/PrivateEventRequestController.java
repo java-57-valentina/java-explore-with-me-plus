@@ -37,7 +37,7 @@ public class PrivateEventRequestController {
             @PathVariable @Min(1) Long userId,
             @PathVariable @Min(1) Long eventId,
             @RequestBody @Valid EventRequestStatusUpdateRequest request) {
-        log.info("PATCH /users/{}/events/{}/requests with body {}", userId, eventId, request);
+        log.debug("PATCH /users/{}/events/{}/requests with body {}", userId, eventId, request);
         return requestService.updateRequestStatuses(userId, eventId, request);
     }
 
@@ -51,7 +51,7 @@ public class PrivateEventRequestController {
     @GetMapping
     public List<ParticipationRequestDto> getRequests(@PathVariable @Min(1) Long userId,
                                                      @PathVariable @Min(1) Long eventId) {
-        log.info("GET /users/{}/events/{}/requests", userId, eventId);
+        log.debug("GET /users/{}/events/{}/requests", userId, eventId);
         return requestService.getRequestsForEvent(eventId, userId);
     }
 }

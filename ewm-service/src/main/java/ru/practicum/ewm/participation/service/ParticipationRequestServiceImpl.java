@@ -51,7 +51,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
      */
     @Transactional
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
-        log.info("Пользователь {} пытается создать запрос участия для события {}", userId, eventId);
+        log.debug("Пользователь {} пытается создать запрос участия для события {}", userId, eventId);
 
         User user = getUserById(userId);
         Event event = getEventById(eventId);
@@ -69,7 +69,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         request.setCreated(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
         request.setStatus(status);
 
-        log.info("Создана заявка от пользователя {} на событие {} со статусом {}", userId, eventId, status);
+        log.debug("Создана заявка от пользователя {} на событие {} со статусом {}", userId, eventId, status);
         return ParticipationRequestMapper.toDto(requestRepo.save(request));
     }
 
@@ -163,7 +163,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     @Transactional
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
-        log.info("Пользователь {} отменяет заявку с ID {}", userId, requestId);
+        log.debug("Пользователь {} отменяет заявку с ID {}", userId, requestId);
 
         ParticipationRequest request = requestRepo.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("ParticipationRequest", requestId));

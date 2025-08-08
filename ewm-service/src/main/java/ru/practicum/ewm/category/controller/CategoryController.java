@@ -39,7 +39,7 @@ public class CategoryController {
     @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDtoOut createCategory(@Validated @RequestBody CategoryDto categoryDto) {
-        log.info("Create category '{}' by admin", categoryDto.getName());
+        log.debug("Create category '{}' by admin", categoryDto.getName());
         return categoryService.add(categoryDto);
     }
 
@@ -47,14 +47,14 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.OK)
     public CategoryDtoOut updateCategory(@Validated @RequestBody CategoryDto categoryDto,
                                          @PathVariable Long id) {
-        log.info("Update category id:{} by admin", id);
+        log.debug("Update category id:{} by admin", id);
         return categoryService.update(id, categoryDto);
     }
 
     @DeleteMapping("/admin/categories/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Long id) {
-        log.info("delete category id:{} by admin", id);
+        log.debug("delete category id:{} by admin", id);
         categoryService.delete(id);
     }
 }

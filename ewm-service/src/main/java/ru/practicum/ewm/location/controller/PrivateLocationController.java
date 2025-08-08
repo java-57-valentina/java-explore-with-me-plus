@@ -35,7 +35,7 @@ public class PrivateLocationController {
     @ResponseStatus(HttpStatus.CREATED)
     LocationPrivateDtoOut create(@PathVariable @Min(1) Long userId,
                                  @RequestBody @Valid LocationCreateDto dto) {
-        log.debug("request for adding location {} from user: {}", dto, userId);
+        log.debug("request for adding location {} by user: {}", dto, userId);
         return locationService.addLocation(userId, dto);
     }
 
@@ -48,7 +48,7 @@ public class PrivateLocationController {
             @PathVariable @Min(1) Long userId,
             @PathVariable @Min(1) Long id,
             @RequestBody @Valid LocationUpdateUserDto dto) {
-        log.debug("request for update location id: {} from user:{}", id, userId);
+        log.debug("request for update location id: {} by user:{}", id, userId);
         return locationService.update(id, userId, dto);
     }
 
@@ -67,7 +67,7 @@ public class PrivateLocationController {
             @RequestParam(defaultValue = "10.0") @DecimalMin("0.0") Double radius,
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(defaultValue = "10") Integer limit) {
-        log.debug("request for getting all locations of user: {}", userId);
+        log.debug("request for search locations by user: {}", userId);
         LocationPrivateFilter filter = LocationPrivateFilter.builder()
                 .text(text)
                 .state(state)
@@ -88,7 +88,7 @@ public class PrivateLocationController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable @Min(1) Long userId,
                 @PathVariable @Min(1) Long id) {
-        log.debug("request for delete location id: {} from user:{}", id, userId);
+        log.debug("request for delete location id: {} by user:{}", id, userId);
         locationService.delete(id, userId);
     }
 }

@@ -45,7 +45,7 @@ public class AdminEventController {
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(defaultValue = "10") Integer limit) {
 
-        log.info("request from Admin: get all events");
+        log.debug("request from Admin: get all events");
         EventAdminFilter filter = EventAdminFilter.builder()
                 .users(users)
                 .categories(categories)
@@ -66,7 +66,7 @@ public class AdminEventController {
     public EventDtoOut updateEvent(
             @PathVariable @Min(1) Long eventId,
             @RequestBody @Valid EventUpdateAdminDto eventDto) {
-        log.info("request from Admin: update event:{}", eventId);
+        log.debug("request from Admin: update event:{}", eventId);
         return eventService.update(eventId, eventDto);
     }
 }

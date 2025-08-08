@@ -36,7 +36,7 @@ public class AdminLocationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     LocationFullDtoOut create(@RequestBody @Valid LocationCreateDto dto) {
-        log.debug("request for adding location from admin: {}", dto);
+        log.debug("request for adding location by admin: {}", dto);
         return locationService.addLocationByAdmin(dto);
     }
 
@@ -47,7 +47,7 @@ public class AdminLocationController {
     @PatchMapping("/{id}")
     LocationFullDtoOut update(@PathVariable @Min(1) Long id,
                                      @RequestBody @Valid LocationUpdateAdminDto dto) {
-        log.debug("request for update location id: {} from admin", id);
+        log.debug("request for update location id: {} by admin", id);
         return locationService.update(id, dto);
     }
 
@@ -68,7 +68,7 @@ public class AdminLocationController {
             @RequestParam(required = false) Integer maxEvents,
             @RequestParam(defaultValue = "0") Integer offset,
             @RequestParam(defaultValue = "10") Integer limit) {
-        log.debug("request for getting all locations from admin");
+        log.debug("request for search locations by admin");
         LocationAdminFilter filter = LocationAdminFilter.builder()
                 .text(text)
                 .creator(user)
@@ -91,7 +91,7 @@ public class AdminLocationController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable @Min(1) Long id) {
-        log.debug("request for delete location id:{} from admin", id);
+        log.debug("request for delete location id:{} by admin", id);
         locationService.delete(id);
     }
 }

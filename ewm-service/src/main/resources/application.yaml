@@ -23,3 +23,7 @@ spring:
     url: jdbc:postgresql://localhost:5434/ewmdb # Вариант 2: Использовать localhost и внешний порт (если запускаем на хосте)
     username: dbuser
     password: 123456
+
+logging:
+  level:
+    ru.practicum.ewm: DEBUG

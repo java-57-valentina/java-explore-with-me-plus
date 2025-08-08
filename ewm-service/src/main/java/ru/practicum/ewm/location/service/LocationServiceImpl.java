@@ -71,7 +71,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     @Transactional
     public LocationFullDtoOut update(Long id, LocationUpdateAdminDto dto) {
-        log.info("try update location by admin: {}", dto);
+        log.debug("try update location by admin: {}", dto);
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Location", id));
 
@@ -117,7 +117,7 @@ public class LocationServiceImpl implements LocationService {
 
 
     private void changeLocationState(Location location, LocationState state) {
-        log.info("changeLocationState id:{} state: {} -> {}", location.getId(), location.getState(), state);
+        log.debug("changeLocationState id:{} state: {} -> {}", location.getId(), location.getState(), state);
         if (location.getState() == state)
             return;
 
