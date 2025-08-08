@@ -1410,6 +1410,625 @@
 					"name": "Update by admin",
 					"item": [
 						{
+							"name": "State change",
+							"item": [
+								{
+									"name": "Редактирование админом статуса локации PENDING -> APPROVED",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"const main = async () => {",
+													"    const api = new API(pm);",
+													"    const rnd = new RandomUtils();",
+													"",
+													"    try {",
+													"        const user = await api.addUser(rnd.getUser());",
+													"        pm.collectionVariables.set(\"uid\", user.id);",
+													"",
+													"        let location = await api.addLocation(user.id, rnd.getLocation());",
+													"        pm.collectionVariables.set(\"lid\", location.id);",
+													"",
+													"        pm.request.body.update({",
+													"            mode: 'raw',",
+													"            raw: JSON.stringify({",
+													"                state: \"APPROVED\"",
+													"            }),",
+													"            options: { raw: { language: 'json' } }",
+													"        });",
+													"",
+													"    } catch(err) {",
+													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+													"    }",
+													"};",
+													"",
+													"const interval = setInterval(() => {}, 1000);",
+													"",
+													"setTimeout(async () => ",
+													"    {",
+													"        try {",
+													"            await main();",
+													"        } catch (e) {",
+													"            console.error(e);",
+													"        } finally {",
+													"            clearInterval(interval);",
+													"        }",
+													"    },  ",
+													"    100 ",
+													");"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"",
+													"const source = JSON.parse(pm.request.body.raw);",
+													"const target = pm.response.json();",
+													"const userId = pm.collectionVariables.get(\"uid\");",
+													"",
+													"pm.test(\"Статус локации должен быть APPROVED\", function () {",
+													"    pm.expect(target.state).equal(\"APPROVED\");",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/locations/:locationId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"locations",
+												":locationId"
+											],
+											"variable": [
+												{
+													"key": "locationId",
+													"value": "{{lid}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование админом статуса локации PENDING -> REJECTED",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"const main = async () => {",
+													"    const api = new API(pm);",
+													"    const rnd = new RandomUtils();",
+													"",
+													"    try {",
+													"        const user = await api.addUser(rnd.getUser());",
+													"        pm.collectionVariables.set(\"uid\", user.id);",
+													"",
+													"        let location = await api.addLocation(user.id, rnd.getLocation());",
+													"        pm.collectionVariables.set(\"lid\", location.id);",
+													"",
+													"        pm.request.body.update({",
+													"            mode: 'raw',",
+													"            raw: JSON.stringify({",
+													"                state: \"REJECTED\"",
+													"            }),",
+													"            options: { raw: { language: 'json' } }",
+													"        });",
+													"",
+													"    } catch(err) {",
+													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+													"    }",
+													"};",
+													"",
+													"const interval = setInterval(() => {}, 1000);",
+													"",
+													"setTimeout(async () => ",
+													"    {",
+													"        try {",
+													"            await main();",
+													"        } catch (e) {",
+													"            console.error(e);",
+													"        } finally {",
+													"            clearInterval(interval);",
+													"        }",
+													"    },  ",
+													"    100 ",
+													");"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"",
+													"const source = JSON.parse(pm.request.body.raw);",
+													"const target = pm.response.json();",
+													"const userId = pm.collectionVariables.get(\"uid\");",
+													"",
+													"pm.test(\"Статус локации должен быть REJECTED\", function () {",
+													"    pm.expect(target.state).equal(\"REJECTED\");",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/locations/:locationId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"locations",
+												":locationId"
+											],
+											"variable": [
+												{
+													"key": "locationId",
+													"value": "{{lid}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование админом статуса локации APPROVED -> REJECTED",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"const main = async () => {",
+													"    const api = new API(pm);",
+													"    const rnd = new RandomUtils();",
+													"",
+													"    try {",
+													"        const user = await api.addUser(rnd.getUser());",
+													"        pm.collectionVariables.set(\"uid\", user.id);",
+													"",
+													"        let location = await api.addLocation(user.id, rnd.getLocation());",
+													"        pm.collectionVariables.set(\"lid\", location.id);",
+													"",
+													"        api.approveLocation(location.id);",
+													"",
+													"        pm.request.body.update({",
+													"            mode: 'raw',",
+													"            raw: JSON.stringify({ state: \"REJECTED\" }),",
+													"            options: { raw: { language: 'json' } }",
+													"        });",
+													"",
+													"    } catch(err) {",
+													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+													"    }",
+													"};",
+													"",
+													"const interval = setInterval(() => {}, 1000);",
+													"",
+													"setTimeout(async () => ",
+													"    {",
+													"        try {",
+													"            await main();",
+													"        } catch (e) {",
+													"            console.error(e);",
+													"        } finally {",
+													"            clearInterval(interval);",
+													"        }",
+													"    },  ",
+													"    100 ",
+													");"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"",
+													"const source = JSON.parse(pm.request.body.raw);",
+													"const target = pm.response.json();",
+													"const userId = pm.collectionVariables.get(\"uid\");",
+													"",
+													"pm.test(\"Статус локации должен быть REJECTED\", function () {",
+													"    pm.expect(target.state).equal(\"REJECTED\");",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/locations/:locationId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"locations",
+												":locationId"
+											],
+											"variable": [
+												{
+													"key": "locationId",
+													"value": "{{lid}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование админом статуса локации APPROVED -> PENDING",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"const main = async () => {",
+													"    const api = new API(pm);",
+													"    const rnd = new RandomUtils();",
+													"",
+													"    try {",
+													"        const user = await api.addUser(rnd.getUser());",
+													"        pm.collectionVariables.set(\"uid\", user.id);",
+													"",
+													"        let location = await api.addLocation(user.id, rnd.getLocation());",
+													"        pm.collectionVariables.set(\"lid\", location.id);",
+													"",
+													"        api.approveLocation(location.id);",
+													"",
+													"        pm.request.body.update({",
+													"            mode: 'raw',",
+													"            raw: JSON.stringify({ state: \"PENDING\" }),",
+													"            options: { raw: { language: 'json' } }",
+													"        });",
+													"",
+													"    } catch(err) {",
+													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+													"    }",
+													"};",
+													"",
+													"const interval = setInterval(() => {}, 1000);",
+													"",
+													"setTimeout(async () => ",
+													"    {",
+													"        try {",
+													"            await main();",
+													"        } catch (e) {",
+													"            console.error(e);",
+													"        } finally {",
+													"            clearInterval(interval);",
+													"        }",
+													"    },  ",
+													"    100 ",
+													");"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Ответ должен содержать код статуса 409 и данные в формате json\", function () {",
+													"    pm.response.to.have.status(409);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/locations/:locationId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"locations",
+												":locationId"
+											],
+											"variable": [
+												{
+													"key": "locationId",
+													"value": "{{lid}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование админом статуса локации REJECTED -> APPROVED",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"const main = async () => {",
+													"    const api = new API(pm);",
+													"    const rnd = new RandomUtils();",
+													"",
+													"    try {",
+													"        const user = await api.addUser(rnd.getUser());",
+													"        pm.collectionVariables.set(\"uid\", user.id);",
+													"",
+													"        let location = await api.addLocation(user.id, rnd.getLocation());",
+													"        pm.collectionVariables.set(\"lid\", location.id);",
+													"",
+													"        api.rejectLocation(location.id);",
+													"",
+													"        pm.request.body.update({",
+													"            mode: 'raw',",
+													"            raw: JSON.stringify({ state: \"APPROVED\" }),",
+													"            options: { raw: { language: 'json' } }",
+													"        });",
+													"",
+													"    } catch(err) {",
+													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+													"    }",
+													"};",
+													"",
+													"const interval = setInterval(() => {}, 1000);",
+													"",
+													"setTimeout(async () => ",
+													"    {",
+													"        try {",
+													"            await main();",
+													"        } catch (e) {",
+													"            console.error(e);",
+													"        } finally {",
+													"            clearInterval(interval);",
+													"        }",
+													"    },  ",
+													"    100 ",
+													");"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"",
+													"const source = JSON.parse(pm.request.body.raw);",
+													"const target = pm.response.json();",
+													"const userId = pm.collectionVariables.get(\"uid\");",
+													"",
+													"pm.test(\"Статус локации должен быть APPROVED\", function () {",
+													"    pm.expect(target.state).equal(\"APPROVED\");",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/locations/:locationId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"locations",
+												":locationId"
+											],
+											"variable": [
+												{
+													"key": "locationId",
+													"value": "{{lid}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Редактирование админом статуса локации REJECTED -> PENDING",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"const main = async () => {",
+													"    const api = new API(pm);",
+													"    const rnd = new RandomUtils();",
+													"",
+													"    try {",
+													"        const user = await api.addUser(rnd.getUser());",
+													"        pm.collectionVariables.set(\"uid\", user.id);",
+													"",
+													"        let location = await api.addLocation(user.id, rnd.getLocation());",
+													"        pm.collectionVariables.set(\"lid\", location.id);",
+													"",
+													"        api.rejectLocation(location.id);",
+													"",
+													"        pm.request.body.update({",
+													"            mode: 'raw',",
+													"            raw: JSON.stringify({ state: \"PENDING\" }),",
+													"            options: { raw: { language: 'json' } }",
+													"        });",
+													"",
+													"    } catch(err) {",
+													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+													"    }",
+													"};",
+													"",
+													"const interval = setInterval(() => {}, 1000);",
+													"",
+													"setTimeout(async () => ",
+													"    {",
+													"        try {",
+													"            await main();",
+													"        } catch (e) {",
+													"            console.error(e);",
+													"        } finally {",
+													"            clearInterval(interval);",
+													"        }",
+													"    },  ",
+													"    100 ",
+													");"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Ответ должен содержать код статуса 409 и данные в формате json\", function () {",
+													"    pm.response.to.have.status(409);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/locations/:locationId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"locations",
+												":locationId"
+											],
+											"variable": [
+												{
+													"key": "locationId",
+													"value": "{{lid}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
 							"name": "Редактирование админом полей локации (созданной админом)",
 							"event": [
 								{
@@ -1663,7 +2282,7 @@
 					"name": "Update by user",
 					"item": [
 						{
-							"name": "Редактирование полей локации пользователем",
+							"name": "Редактирование локации созданной текущим пользователем",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -1673,18 +2292,18 @@
 											"    const api = new API(pm);",
 											"    const rnd = new RandomUtils();",
 											"",
-											"    const user = await api.addUser(rnd.getUser());",
-											"    pm.collectionVariables.set(\"uid\", user.id);",
-											"",
-											"    let location = await api.addLocation(user.id, rnd.getLocation());",
-											"    pm.collectionVariables.set(\"lid\", location.id);",
-											"",
-											"    let location2 = rnd.getLocation();",
 											"    try {",
-											"        ",
+											"        const creator = await api.addUser(rnd.getUser());",
+											"        const location = await api.addLocation(creator.id, rnd.getLocation());",
+											"",
+											"        pm.collectionVariables.set(\"uid\", creator.id);",
+											"        pm.collectionVariables.set(\"lid\", location.id);",
+											"",
 											"    } catch(err) {",
 											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 											"    }",
+											"",
+											"    const location2 = rnd.getLocation();",
 											"",
 											"    pm.request.body.update({",
 											"        mode: 'raw',",
@@ -1725,13 +2344,13 @@
 											"const source = JSON.parse(pm.request.body.raw);",
 											"const target = pm.response.json();",
 											"",
-											"pm.test(\"Локация, созданная пользователем, должна содержать поля: id, name, address, lat, lon, state\", function () {",
-											"pm.expect(target).to.have.property('id');",
-											"pm.expect(target).to.have.property('name');",
-											"pm.expect(target).to.have.property('address');",
-											"pm.expect(target).to.have.property('state');",
-											"pm.expect(target).to.have.property('lat');",
-											"pm.expect(target).to.have.property('lon');",
+											"pm.test(\"Локация должна содержать поля: id, name, address, lat, lon, state\", function () {",
+											"    pm.expect(target).to.have.property('id');",
+											"    pm.expect(target).to.have.property('name');",
+											"    pm.expect(target).to.have.property('address');",
+											"    pm.expect(target).to.have.property('state');",
+											"    pm.expect(target).to.have.property('lat');",
+											"    pm.expect(target).to.have.property('lon');",
 											"});",
 											"",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {",
@@ -1788,119 +2407,9 @@
 								}
 							},
 							"response": []
-						}
-					]
-				},
-				{
-					"name": "State change",
-					"item": [
-						{
-							"name": "Редактирование админом статуса локации PENDING -> APPROVED",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"const main = async () => {",
-											"    const api = new API(pm);",
-											"    const rnd = new RandomUtils();",
-											"",
-											"    try {",
-											"        const user = await api.addUser(rnd.getUser());",
-											"        pm.collectionVariables.set(\"uid\", user.id);",
-											"",
-											"        let location = await api.addLocation(user.id, rnd.getLocation());",
-											"        pm.collectionVariables.set(\"lid\", location.id);",
-											"",
-											"        pm.request.body.update({",
-											"            mode: 'raw',",
-											"            raw: JSON.stringify({",
-											"                state: \"APPROVED\"",
-											"            }),",
-											"            options: { raw: { language: 'json' } }",
-											"        });",
-											"",
-											"    } catch(err) {",
-											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
-											"    }",
-											"};",
-											"",
-											"const interval = setInterval(() => {}, 1000);",
-											"",
-											"setTimeout(async () => ",
-											"    {",
-											"        try {",
-											"            await main();",
-											"        } catch (e) {",
-											"            console.error(e);",
-											"        } finally {",
-											"            clearInterval(interval);",
-											"        }",
-											"    },  ",
-											"    100 ",
-											");"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    pm.response.to.be.withBody;",
-											"    pm.response.to.be.json;",
-											"});",
-											"",
-											"const source = JSON.parse(pm.request.body.raw);",
-											"const target = pm.response.json();",
-											"const userId = pm.collectionVariables.get(\"uid\");",
-											"",
-											"pm.test(\"Статус локации должен быть APPROVED\", function () {",
-											"    pm.expect(target.state).equal(\"APPROVED\");",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{{request_body}}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/admin/locations/:locationId",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"admin",
-										"locations",
-										":locationId"
-									],
-									"variable": [
-										{
-											"key": "locationId",
-											"value": "{{lid}}"
-										}
-									]
-								}
-							},
-							"response": []
 						},
 						{
-							"name": "Редактирование админом статуса локации PENDING -> REJECTED",
+							"name": "Редактирование одобренной локации созданной текущим пользователем",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -1911,233 +2420,25 @@
 											"    const rnd = new RandomUtils();",
 											"",
 											"    try {",
-											"        const user = await api.addUser(rnd.getUser());",
-											"        pm.collectionVariables.set(\"uid\", user.id);",
-											"",
-											"        let location = await api.addLocation(user.id, rnd.getLocation());",
-											"        pm.collectionVariables.set(\"lid\", location.id);",
-											"",
-											"        pm.request.body.update({",
-											"            mode: 'raw',",
-											"            raw: JSON.stringify({",
-											"                state: \"REJECTED\"",
-											"            }),",
-											"            options: { raw: { language: 'json' } }",
-											"        });",
-											"",
-											"    } catch(err) {",
-											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
-											"    }",
-											"};",
-											"",
-											"const interval = setInterval(() => {}, 1000);",
-											"",
-											"setTimeout(async () => ",
-											"    {",
-											"        try {",
-											"            await main();",
-											"        } catch (e) {",
-											"            console.error(e);",
-											"        } finally {",
-											"            clearInterval(interval);",
-											"        }",
-											"    },  ",
-											"    100 ",
-											");"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    pm.response.to.be.withBody;",
-											"    pm.response.to.be.json;",
-											"});",
-											"",
-											"const source = JSON.parse(pm.request.body.raw);",
-											"const target = pm.response.json();",
-											"const userId = pm.collectionVariables.get(\"uid\");",
-											"",
-											"pm.test(\"Статус локации должен быть REJECTED\", function () {",
-											"    pm.expect(target.state).equal(\"REJECTED\");",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{{request_body}}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/admin/locations/:locationId",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"admin",
-										"locations",
-										":locationId"
-									],
-									"variable": [
-										{
-											"key": "locationId",
-											"value": "{{lid}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Редактирование админом статуса локации APPROVED -> REJECTED",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"const main = async () => {",
-											"    const api = new API(pm);",
-											"    const rnd = new RandomUtils();",
-											"",
-											"    try {",
-											"        const user = await api.addUser(rnd.getUser());",
-											"        pm.collectionVariables.set(\"uid\", user.id);",
-											"",
-											"        let location = await api.addLocation(user.id, rnd.getLocation());",
-											"        pm.collectionVariables.set(\"lid\", location.id);",
+											"        const creator = await api.addUser(rnd.getUser());",
+											"        const location = await api.addLocation(creator.id, rnd.getLocation());",
 											"",
 											"        api.approveLocation(location.id);",
 											"",
-											"        pm.request.body.update({",
-											"            mode: 'raw',",
-											"            raw: JSON.stringify({ state: \"REJECTED\" }),",
-											"            options: { raw: { language: 'json' } }",
-											"        });",
-											"",
-											"    } catch(err) {",
-											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
-											"    }",
-											"};",
-											"",
-											"const interval = setInterval(() => {}, 1000);",
-											"",
-											"setTimeout(async () => ",
-											"    {",
-											"        try {",
-											"            await main();",
-											"        } catch (e) {",
-											"            console.error(e);",
-											"        } finally {",
-											"            clearInterval(interval);",
-											"        }",
-											"    },  ",
-											"    100 ",
-											");"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    pm.response.to.be.withBody;",
-											"    pm.response.to.be.json;",
-											"});",
-											"",
-											"const source = JSON.parse(pm.request.body.raw);",
-											"const target = pm.response.json();",
-											"const userId = pm.collectionVariables.get(\"uid\");",
-											"",
-											"pm.test(\"Статус локации должен быть REJECTED\", function () {",
-											"    pm.expect(target.state).equal(\"REJECTED\");",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{{request_body}}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/admin/locations/:locationId",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"admin",
-										"locations",
-										":locationId"
-									],
-									"variable": [
-										{
-											"key": "locationId",
-											"value": "{{lid}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Редактирование админом статуса локации APPROVED -> PENDING",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"const main = async () => {",
-											"    const api = new API(pm);",
-											"    const rnd = new RandomUtils();",
-											"",
-											"    try {",
-											"        const user = await api.addUser(rnd.getUser());",
-											"        pm.collectionVariables.set(\"uid\", user.id);",
-											"",
-											"        let location = await api.addLocation(user.id, rnd.getLocation());",
+											"        pm.collectionVariables.set(\"uid\", creator.id);",
 											"        pm.collectionVariables.set(\"lid\", location.id);",
 											"",
-											"        api.approveLocation(location.id);",
-											"",
-											"        pm.request.body.update({",
-											"            mode: 'raw',",
-											"            raw: JSON.stringify({ state: \"PENDING\" }),",
-											"            options: { raw: { language: 'json' } }",
-											"        });",
-											"",
 											"    } catch(err) {",
 											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 											"    }",
+											"",
+											"    const location2 = rnd.getLocation();",
+											"",
+											"    pm.request.body.update({",
+											"        mode: 'raw',",
+											"        raw: JSON.stringify(location2),",
+											"        options: { raw: { language: 'json' } }",
+											"    });",
 											"};",
 											"",
 											"const interval = setInterval(() => {}, 1000);",
@@ -2187,16 +2488,21 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/admin/locations/:locationId",
+									"raw": "{{baseUrl}}/users/:userId/locations/:locationId",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
-										"admin",
+										"users",
+										":userId",
 										"locations",
 										":locationId"
 									],
 									"variable": [
+										{
+											"key": "userId",
+											"value": "{{uid}}"
+										},
 										{
 											"key": "locationId",
 											"value": "{{lid}}"
@@ -2207,7 +2513,7 @@
 							"response": []
 						},
 						{
-							"name": "Редактирование админом статуса локации REJECTED -> APPROVED",
+							"name": "Редактирование отклоненной локации созданной текущим пользователем",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -2218,128 +2524,25 @@
 											"    const rnd = new RandomUtils();",
 											"",
 											"    try {",
-											"        const user = await api.addUser(rnd.getUser());",
-											"        pm.collectionVariables.set(\"uid\", user.id);",
-											"",
-											"        let location = await api.addLocation(user.id, rnd.getLocation());",
-											"        pm.collectionVariables.set(\"lid\", location.id);",
+											"        const creator = await api.addUser(rnd.getUser());",
+											"        const location = await api.addLocation(creator.id, rnd.getLocation());",
 											"",
 											"        api.rejectLocation(location.id);",
 											"",
-											"        pm.request.body.update({",
-											"            mode: 'raw',",
-											"            raw: JSON.stringify({ state: \"APPROVED\" }),",
-											"            options: { raw: { language: 'json' } }",
-											"        });",
+											"        pm.collectionVariables.set(\"uid\", creator.id);",
+											"        pm.collectionVariables.set(\"lid\", location.id);",
 											"",
 											"    } catch(err) {",
 											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 											"    }",
-											"};",
 											"",
-											"const interval = setInterval(() => {}, 1000);",
+											"    const location2 = rnd.getLocation();",
 											"",
-											"setTimeout(async () => ",
-											"    {",
-											"        try {",
-											"            await main();",
-											"        } catch (e) {",
-											"            console.error(e);",
-											"        } finally {",
-											"            clearInterval(interval);",
-											"        }",
-											"    },  ",
-											"    100 ",
-											");"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    pm.response.to.be.withBody;",
-											"    pm.response.to.be.json;",
-											"});",
-											"",
-											"const source = JSON.parse(pm.request.body.raw);",
-											"const target = pm.response.json();",
-											"const userId = pm.collectionVariables.get(\"uid\");",
-											"",
-											"pm.test(\"Статус локации должен быть APPROVED\", function () {",
-											"    pm.expect(target.state).equal(\"APPROVED\");",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{{request_body}}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{baseUrl}}/admin/locations/:locationId",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"admin",
-										"locations",
-										":locationId"
-									],
-									"variable": [
-										{
-											"key": "locationId",
-											"value": "{{lid}}"
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Редактирование админом статуса локации REJECTED -> PENDING",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"const main = async () => {",
-											"    const api = new API(pm);",
-											"    const rnd = new RandomUtils();",
-											"",
-											"    try {",
-											"        const user = await api.addUser(rnd.getUser());",
-											"        pm.collectionVariables.set(\"uid\", user.id);",
-											"",
-											"        let location = await api.addLocation(user.id, rnd.getLocation());",
-											"        pm.collectionVariables.set(\"lid\", location.id);",
-											"",
-											"        api.rejectLocation(location.id);",
-											"",
-											"        pm.request.body.update({",
-											"            mode: 'raw',",
-											"            raw: JSON.stringify({ state: \"PENDING\" }),",
-											"            options: { raw: { language: 'json' } }",
-											"        });",
-											"",
-											"    } catch(err) {",
-											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
-											"    }",
+											"    pm.request.body.update({",
+											"        mode: 'raw',",
+											"        raw: JSON.stringify(location2),",
+											"        options: { raw: { language: 'json' } }",
+											"    });",
 											"};",
 											"",
 											"const interval = setInterval(() => {}, 1000);",
@@ -2389,16 +2592,223 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/admin/locations/:locationId",
+									"raw": "{{baseUrl}}/users/:userId/locations/:locationId",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
-										"admin",
+										"users",
+										":userId",
 										"locations",
 										":locationId"
 									],
 									"variable": [
+										{
+											"key": "userId",
+											"value": "{{uid}}"
+										},
+										{
+											"key": "locationId",
+											"value": "{{lid}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Редактирование локации созданной другим пользователем",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {",
+											"    const api = new API(pm);",
+											"    const rnd = new RandomUtils();",
+											"",
+											"    const creator = await api.addUser(rnd.getUser());",
+											"    const editor  = await api.addUser(rnd.getUser());",
+											"    ",
+											"    let location = await api.addLocation(creator.id, rnd.getLocation());",
+											"    ",
+											"    pm.collectionVariables.set(\"uid\", editor.id);",
+											"    pm.collectionVariables.set(\"lid\", location.id);",
+											"",
+											"    try {",
+											"        ",
+											"    } catch(err) {",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+											"    }",
+											"",
+											"    pm.request.body.update({",
+											"        mode: 'raw',",
+											"        raw: JSON.stringify({ name: \"New name\" }),",
+											"        options: { raw: { language: 'json' } }",
+											"    });",
+											"};",
+											"",
+											"const interval = setInterval(() => {}, 1000);",
+											"",
+											"setTimeout(async () => ",
+											"    {",
+											"        try {",
+											"            await main();",
+											"        } catch (e) {",
+											"            console.error(e);",
+											"        } finally {",
+											"            clearInterval(interval);",
+											"        }",
+											"    },  ",
+											"    100 ",
+											");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 403 и данные в формате json\", function () {",
+											"    pm.response.to.have.status(403);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/:userId/locations/:locationId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userId",
+										"locations",
+										":locationId"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "{{uid}}"
+										},
+										{
+											"key": "locationId",
+											"value": "{{lid}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Редактирование локации созданной администратором",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {",
+											"    const api = new API(pm);",
+											"    const rnd = new RandomUtils();",
+											"",
+											"    try {",
+											"        const location = await api.addLocationByAdmin(rnd.getLocation());",
+											"        const editor  = await api.addUser(rnd.getUser());",
+											"        ",
+											"        pm.collectionVariables.set(\"uid\", editor.id);",
+											"        pm.collectionVariables.set(\"lid\", location.id);",
+											"    } catch(err) {",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+											"    }",
+											"",
+											"    pm.request.body.update({",
+											"        mode: 'raw',",
+											"        raw: JSON.stringify({ name: \"New name\" }),",
+											"        options: { raw: { language: 'json' } }",
+											"    });",
+											"};",
+											"",
+											"const interval = setInterval(() => {}, 1000);",
+											"",
+											"setTimeout(async () => ",
+											"    {",
+											"        try {",
+											"            await main();",
+											"        } catch (e) {",
+											"            console.error(e);",
+											"        } finally {",
+											"            clearInterval(interval);",
+											"        }",
+											"    },  ",
+											"    100 ",
+											");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 403 или 409 и данные в формате json\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([403, 409]);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/:userId/locations/:locationId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userId",
+										"locations",
+										":locationId"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "{{uid}}"
+										},
 										{
 											"key": "locationId",
 											"value": "{{lid}}"
@@ -2422,7 +2832,427 @@
 		},
 		{
 			"name": "Deleting",
-			"item": []
+			"item": [
+				{
+					"name": "Удаление локации без мероприятий админом",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const location = await api.addLocationByAdmin(rnd.getLocation());",
+									"        pm.collectionVariables.set(\"lid\", location.id);",
+									"",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"    pm.response.to.not.have.body;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/locations/:locationId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"locations",
+								":locationId"
+							],
+							"variable": [
+								{
+									"key": "locationId",
+									"value": "{{lid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление локации c мероприятиями админом",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const location = await api.addLocationByAdmin(rnd.getLocation());",
+									"        const user = await api.addUser(rnd.getUser());",
+									"        const category = await api.addCategory(rnd.getCategory());",
+									"",
+									"        let event = rnd.getEvent(category.id);",
+									"        event.location.id = location.id;",
+									"        const evt = await api.addEvent(user.id, event);",
+									"        api.publishEvent(evt.id);",
+									"",
+									"        pm.collectionVariables.set(\"lid\", location.id);",
+									"        pm.collectionVariables.set(\"uid\", user.id);",
+									"",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409\", function () {",
+									"    pm.response.to.have.status(409);",
+									"    pm.response.to.not.have.body;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/locations/:locationId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"locations",
+								":locationId"
+							],
+							"variable": [
+								{
+									"key": "locationId",
+									"value": "{{lid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление PENDING локации создателем",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const user = await api.addUser(rnd.getUser());",
+									"        const location = await api.addLocation(user.id, rnd.getLocation());",
+									"",
+									"        pm.collectionVariables.set(\"uid\", user.id);",
+									"        pm.collectionVariables.set(\"lid\", location.id);",
+									"",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"    pm.response.to.not.have.body;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/locations/:locationId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"locations",
+								":locationId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "locationId",
+									"value": "{{lid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление одобренной локации без мероприятий создателем",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const user = await api.addUser(rnd.getUser());",
+									"        const location = await api.addLocation(user.id, rnd.getLocation());",
+									"",
+									"        api.approveLocation(location.id);",
+									"",
+									"        pm.collectionVariables.set(\"uid\", user.id);",
+									"        pm.collectionVariables.set(\"lid\", location.id);",
+									"",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 409 и данные в формате json\", function () {",
+									"    pm.expect(pm.response.code).to.be.equals(409);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/locations/:locationId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"locations",
+								":locationId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "locationId",
+									"value": "{{lid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление PENDING локации другим пользователем",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {",
+									"    const api = new API(pm);",
+									"    const rnd = new RandomUtils();",
+									"",
+									"    try {",
+									"        const creator = await api.addUser(rnd.getUser());",
+									"        const editor = await api.addUser(rnd.getUser());",
+									"",
+									"        const location = await api.addLocation(creator.id, rnd.getLocation());",
+									"",
+									"        pm.collectionVariables.set(\"uid\", editor.id);",
+									"        pm.collectionVariables.set(\"lid\", location.id);",
+									"",
+									"    } catch(err) {",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+									"    }",
+									"};",
+									"",
+									"const interval = setInterval(() => {}, 1000);",
+									"",
+									"setTimeout(async () => ",
+									"    {",
+									"        try {",
+									"            await main();",
+									"        } catch (e) {",
+									"            console.error(e);",
+									"        } finally {",
+									"            clearInterval(interval);",
+									"        }",
+									"    },  ",
+									"    100 ",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 403 или 409 и данные в формате json\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([403, 409]);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userId/locations/:locationId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userId",
+								"locations",
+								":locationId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "{{uid}}"
+								},
+								{
+									"key": "locationId",
+									"value": "{{lid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
