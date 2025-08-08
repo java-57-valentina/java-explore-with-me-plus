@@ -78,6 +78,8 @@ public class PublicEventController {
                 .state(EventState.PUBLISHED)
                 .build();
 
+        log.debug("request for getting events (public)");
+
         if (lat != null && lon != null)
             filter.setZone(new Zone(lat, lon, radius));
 
@@ -93,6 +95,7 @@ public class PublicEventController {
                 .toList();
 
         writeStatisticsByIds(ids, request.getRemoteAddr());
+        writeStatisticsByUris(List.of("/events"), request.getRemoteAddr());
 
         return events;
     }
