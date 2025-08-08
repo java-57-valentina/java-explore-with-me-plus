@@ -29,7 +29,7 @@ public class PublicLocationController {
      * @return список DTO локаций
      */
     @GetMapping
-    Collection<LocationDtoOut> getAll(
+    public Collection<LocationDtoOut> getAll(
             @RequestParam(required = false) String text,
             @RequestParam(required = false) @DecimalMin("-90.0")  @DecimalMax("90.0")  Double lat,
             @RequestParam(required = false) @DecimalMin("-180.0") @DecimalMax("180.0") Double lon,

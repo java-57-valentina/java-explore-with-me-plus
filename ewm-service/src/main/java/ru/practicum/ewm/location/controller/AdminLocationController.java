@@ -35,7 +35,7 @@ public class AdminLocationController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    LocationFullDtoOut create(@RequestBody @Valid LocationCreateDto dto) {
+    public LocationFullDtoOut create(@RequestBody @Valid LocationCreateDto dto) {
         log.debug("request for adding location by admin: {}", dto);
         return locationService.addLocationByAdmin(dto);
     }
@@ -45,7 +45,7 @@ public class AdminLocationController {
      * @return DTO обновленной локаций
      */
     @PatchMapping("/{id}")
-    LocationFullDtoOut update(@PathVariable @Min(1) Long id,
+    public LocationFullDtoOut update(@PathVariable @Min(1) Long id,
                                      @RequestBody @Valid LocationUpdateAdminDto dto) {
         log.debug("request for update location id: {} by admin", id);
         return locationService.update(id, dto);
@@ -57,7 +57,7 @@ public class AdminLocationController {
      * @return список DTO локаций
      */
     @GetMapping
-    Collection<LocationFullDtoOut> getAll(
+    public Collection<LocationFullDtoOut> getAll(
             @RequestParam(required = false) String text,
             @RequestParam(required = false) Long user,
             @RequestParam(required = false) LocationState state,
@@ -90,7 +90,7 @@ public class AdminLocationController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable @Min(1) Long id) {
+    public void delete(@PathVariable @Min(1) Long id) {
         log.debug("request for delete location id:{} by admin", id);
         locationService.delete(id);
     }

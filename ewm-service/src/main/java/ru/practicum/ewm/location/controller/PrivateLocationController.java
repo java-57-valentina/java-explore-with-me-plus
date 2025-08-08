@@ -33,7 +33,7 @@ public class PrivateLocationController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    LocationPrivateDtoOut create(@PathVariable @Min(1) Long userId,
+    public LocationPrivateDtoOut create(@PathVariable @Min(1) Long userId,
                                  @RequestBody @Valid LocationCreateDto dto) {
         log.debug("request for adding location {} by user: {}", dto, userId);
         return locationService.addLocation(userId, dto);
@@ -44,7 +44,7 @@ public class PrivateLocationController {
      * @return DTO обновленной локации
      */
     @PatchMapping("/{id}")
-    LocationPrivateDtoOut update(
+    public LocationPrivateDtoOut update(
             @PathVariable @Min(1) Long userId,
             @PathVariable @Min(1) Long id,
             @RequestBody @Valid LocationUpdateUserDto dto) {
@@ -58,7 +58,7 @@ public class PrivateLocationController {
      * @return список DTO локаций
      */
     @GetMapping
-    Collection<LocationPrivateDtoOut> getAll(
+    public Collection<LocationPrivateDtoOut> getAll(
             @PathVariable @Min(1) Long userId,
             @RequestParam(required = false) String text,
             @RequestParam(required = false) LocationState state,
@@ -86,7 +86,7 @@ public class PrivateLocationController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable @Min(1) Long userId,
+    public void delete(@PathVariable @Min(1) Long userId,
                 @PathVariable @Min(1) Long id) {
         log.debug("request for delete location id: {} by user:{}", id, userId);
         locationService.delete(id, userId);
