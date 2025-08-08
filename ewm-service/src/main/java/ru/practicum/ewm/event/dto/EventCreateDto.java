@@ -25,7 +25,7 @@ public class EventCreateDto {
     @Size(min = 20, max = 2000, message = "The annotation length must be between 20 and 2000 characters")
     private String annotation;
 
-    @NotNull
+    @NotNull(message = "Category cannot be null")
     @JsonProperty("category")
     private Long categoryId;
 
@@ -38,7 +38,7 @@ public class EventCreateDto {
     @JsonFormat(pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
-    @NotNull
+    @NotNull(message = "Location cannot be null")
     private LocationDto location;
 
     private Boolean paid = false;

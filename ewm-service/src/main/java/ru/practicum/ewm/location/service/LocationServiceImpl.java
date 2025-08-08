@@ -176,6 +176,13 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    public LocationFullDtoOut getByIdForAdmin(Long id) {
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Location", id));
+        return LocationMapper.toFullDto(location);
+    }
+
+    @Override
     @Transactional
     public void delete(Long id) {
         if (eventRepository.existsByLocationId(id)) {

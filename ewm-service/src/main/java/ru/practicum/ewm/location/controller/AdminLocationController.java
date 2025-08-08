@@ -85,6 +85,16 @@ public class AdminLocationController {
     }
 
     /**
+     * Получить локацию по id от имени администратора.
+     * @return DTO локации
+     */
+    @GetMapping("/{id}")
+    public LocationFullDtoOut get(@PathVariable @Min(1) Long id) {
+        log.debug("request for get location id:{} by admin", id);
+        return locationService.getByIdForAdmin(id);
+    }
+
+    /**
      * Удалить существующую локацию от имени администратора.
      * Удаляется только локация, не имеющая мероприятий
      */

@@ -32,4 +32,5 @@ public interface LocationService {
 
     Location getOrCreateLocation(LocationDto location);
 
+    LocationFullDtoOut getByIdForAdmin(Long id);
 }
