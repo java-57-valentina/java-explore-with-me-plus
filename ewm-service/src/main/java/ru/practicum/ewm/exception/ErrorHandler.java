@@ -50,7 +50,10 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler({ConditionNotMetException.class, IllegalStateException.class})
+    @ExceptionHandler({
+            ConditionNotMetException.class,
+            IllegalStateException.class,
+            DuplicateLocationsException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictExceptions(RuntimeException ex) {
         return ErrorResponse.builder()

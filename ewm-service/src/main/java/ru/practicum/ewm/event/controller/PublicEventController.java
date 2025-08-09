@@ -1,6 +1,8 @@
 package ru.practicum.ewm.event.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -23,6 +25,7 @@ import ru.practicum.ewm.event.model.EventFilter;
 import ru.practicum.ewm.event.model.EventState;
 import ru.practicum.ewm.event.service.EventService;
 import ru.practicum.ewm.exception.InvalidRequestException;
+import ru.practicum.ewm.location.model.Zone;
 import ru.practicum.statsclient.StatsClient;
 import ru.practicum.statsclient.StatsClientException;
 
@@ -52,6 +55,10 @@ public class PublicEventController {
             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeStart,
             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
+            @RequestParam(required = false) Long location,
+            @RequestParam(required = false) @DecimalMin("-90.0")  @DecimalMax("90.0")  Double lat,
+            @RequestParam(required = false) @DecimalMin("-180.0") @DecimalMax("180.0") Double lon,
+            @RequestParam(defaultValue = "10.0") @DecimalMin("0.0") Double radius,
             @RequestParam(defaultValue = "EVENT_DATE") String sort,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size,
@@ -61,6 +68,7 @@ public class PublicEventController {
                 .text(text)
                 .categories(categories)
                 .paid(paid)
+                .locationId(location)
                 .rangeStart(rangeStart)
                 .rangeEnd(rangeEnd)
                 .onlyAvailable(onlyAvailable)
@@ -69,6 +77,11 @@ public class PublicEventController {
                 .size(size)
                 .state(EventState.PUBLISHED)
                 .build();
+
+        log.debug("request for getting events (public)");
+
+        if (lat != null && lon != null)
+            filter.setZone(new Zone(lat, lon, radius));
 
         if (filter.getRangeStart() != null && filter.getRangeEnd() != null
                 && filter.getRangeStart().isAfter(filter.getRangeEnd())) {

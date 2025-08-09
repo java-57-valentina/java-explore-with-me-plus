@@ -1,9 +1,11 @@
 package ru.practicum.ewm.event.service;
 
+import jakarta.persistence.criteria.Expression;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.EventState;
+import ru.practicum.ewm.location.model.Zone;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -86,4 +88,28 @@ public class EventSpecifications {
                 cb.lessThanOrEqualTo(root.get("eventDate"), rangeEnd);
     }
 
+    public static Specification<Event> withLocationId(Long locationId) {
+        if (locationId == null)
+            return null;
+
+        return (root, query, cb) ->
+                cb.equal(root.get("location").get("id"), locationId);
+    }
+
+    public static Specification<Event> withCoordinates(Zone zone) {
+        if (zone == null)
+            return null;
+
+        return (root, query, cb) -> {
+            Expression<Double> distance = cb.function(
+                    "calculate_distance_meters",
+                    Double.class,
+                    cb.literal(zone.getLatitude()),
+                    cb.literal(zone.getLongitude()),
+                    root.get("location").get("latitude"),
+                    root.get("location").get("longitude")
+            );
+            return cb.lessThanOrEqualTo(distance, zone.getRadius());
+        };
+    }
 }

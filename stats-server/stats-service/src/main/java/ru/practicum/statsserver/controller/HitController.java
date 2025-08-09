@@ -28,7 +28,7 @@ public class HitController {
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@RequestBody @Valid HitDto hitDto) {
-        log.info("request for adding hit: {}", hitDto);
+        log.debug("request for adding hit: {}", hitDto);
         hitService.add(hitDto);
     }
 
@@ -40,10 +40,10 @@ public class HitController {
             @RequestParam (required = false) ArrayList<String> uris,
             @RequestParam (defaultValue = "false") Boolean unique) {
 
-        log.info("request for statistics:");
-        log.info(" start date: {}", start);
-        log.info(" end date: {}", end);
-        log.info(" uris: {}", uris);
+        log.debug("request for statistics:");
+        log.debug(" start date: {}", start);
+        log.debug(" end date: {}", end);
+        log.debug(" uris: {}", uris);
 
         return hitService.getStatistics(start, end, uris, unique);
     }

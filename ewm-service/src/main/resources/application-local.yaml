@@ -14,3 +14,7 @@ spring:
     password: ewm
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+
+logging:
+  level:
+    ru.practicum.ewm: DEBUG
