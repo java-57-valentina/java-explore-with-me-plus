@@ -15,8 +15,6 @@ public class LocationCreateDto {
     @Size(min = 4, max = 64, message = "The location name length must be between 4 and 64 characters")
     private String name;
 
-//    @NotBlank(message = "The location name cannot be blank")
-//    @Size(min = 4, max = 64, message = "The location name length must be between 4 and 64 characters")
     private String address;
 
     @NotNull(message = "The location latitude cannot be empty")

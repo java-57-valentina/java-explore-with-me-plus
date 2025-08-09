@@ -26,8 +26,6 @@ public class LocationMapper {
                 .address(location.getAddress())
                 .latitude(location.getLatitude())
                 .longitude(location.getLongitude())
-                // .creator(location.getCreator() == null ? null : UserMapper.toDto(location.getCreator()))
-                // .state(location.getState())
                 .build();
     }
 

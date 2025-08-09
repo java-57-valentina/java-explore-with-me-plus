@@ -16,26 +16,26 @@ public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id")
-    User creator;
+    private User creator;
 
     @Column(nullable = false)
-    String name;
+    private String name;
 
-    String address;
-
-    @Column(nullable = false)
-    Double latitude;
+    private String address;
 
     @Column(nullable = false)
-    Double longitude;
+    private Double latitude;
+
+    @Column(nullable = false)
+    private Double longitude;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    LocationState state = LocationState.PENDING;
+    private LocationState state = LocationState.PENDING;
 }
